@@ -45,10 +45,9 @@ out/
 # ============================================================
 # IDEs — VS Code
 # ============================================================
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/launch.json
+# Kişisel araç ayarları (kiroAgent vs.) repoya girmemeli.
+# Takım geneli ayar gerekirse .vscode/extensions.json eklenebilir.
+.vscode/
 
 # ============================================================
 # NODE.js / NPM / YARN (web & mobile için)
