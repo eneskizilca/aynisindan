@@ -1,0 +1,14 @@
+### 1. Yeni Sipariş Oluşturma Testi (POST)
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+
+{
+  "customerId": "550e8400-e29b-41d4-a716-446655440000",
+  "title": "Özel Tasarım Ahşap Masa",
+  "description": "200x90cm ölçülerinde, ceviz ağacından, metal ayaklı çalışma masası istiyorum.",
+  "referenceImageUrl": "https://s3.amazonaws.com/aynisindan/test-masa.jpg"
+}
+
+
+### 2. Müşterinin Siparişlerini Getirme Testi (GET)
+GET http://localhost:8080/api/v1/orders/customer/550e8400-e29b-41d4-a716-446655440000

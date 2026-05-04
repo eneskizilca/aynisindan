@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # 1. Core Servis İçin İlişkisel Veritabanı (Spring Boot bağlanacak)
+  postgres-core:
+    image: postgres:15-alpine
+    container_name: aynisindan-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: aynisindan_core
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # 2. Katalog ve Chat Servisi İçin NoSQL Veritabanı (Golang bağlanacak)
+  mongo-catalog:
+    image: mongo:6.0
+    container_name: aynisindan-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  # 3. Önbellekleme ve Hızlı Okuma İçin (İleride Session ve Cache için)
+  redis-cache:
+    image: redis:7-alpine
+    container_name: aynisindan-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+# Verilerin bilgisayarı kapattığında kaybolmaması için kalıcı disk alanları
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
