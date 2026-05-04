@@ -12,3 +12,17 @@ Content-Type: application/json
 
 ### 2. Müşterinin Siparişlerini Getirme Testi (GET)
 GET http://localhost:8080/api/v1/orders/customer/550e8400-e29b-41d4-a716-446655440000
+
+### 3. Zanaatkarın Siparişe Teklif Vermesi (POST)
+POST http://localhost:8080/api/v1/quotes
+Content-Type: application/json
+
+{
+  "orderId": "d8f63763-ffe6-4034-8ac9-31134a7c1e34",
+  "artisanId": "770e8400-e29b-41d4-a716-446655440000",
+  "offeredPrice": 4500.00,
+  "estimatedDays": 14
+}
+
+### 4. Müşterinin Teklifi Kabul Etmesi (POST)
+POST http://localhost:8080/api/v1/quotes/cb087c1f-7c8e-4bb8-ac7c-f1b4e42f5a6b/accept
