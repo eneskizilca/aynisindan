@@ -1,6 +1,5 @@
 package com.aynisindan.core.service;
 
-import com.aynisindan.core.dto.request.CompleteOrderRequest;
 import com.aynisindan.core.dto.request.CreateOrderRequest;
 import com.aynisindan.core.dto.request.CreateReviewRequest;
 import com.aynisindan.core.dto.response.OrderResponse;
@@ -15,6 +14,7 @@ import com.aynisindan.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.UUID;
@@ -46,9 +46,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
-        User customer = userRepository.findById(request.customerId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Müşteri bulunamadı. ID: " + request.customerId()));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User customer = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
 
         Order order = new Order();
         order.setCustomer(customer);
@@ -71,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public OrderResponse completeOrder(UUID orderId, CompleteOrderRequest request) {
+    public OrderResponse completeOrder(UUID orderId) {
         // 1. Siparişi bul
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException(
@@ -84,8 +84,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 3. İsteği yapan zanaatkar, siparişe atanmış zanaatkarla eşleşiyor mu?
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+
         UUID assignedArtisanId = order.getArtisan().getId();
-        if (!assignedArtisanId.equals(request.artisanId())) {
+        if (!assignedArtisanId.equals(currentUser.getId())) {
             throw new RuntimeException(
                     "Yetkisiz işlem: bu siparişi yalnızca atanmış zanaatkar teslim edebilir.");
         }
@@ -107,6 +111,15 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus() != OrderStatus.DELIVERED) {
             throw new RuntimeException(
                     "Onaylanacak bir teslimat yok; mevcut durum: " + order.getStatus());
+        }
+
+        // 2.5. İsteği yapan müşteri, siparişi oluşturan müşteri mi?
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+
+        if (!order.getCustomer().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Yetkisiz işlem: Sadece sipariş sahibi teslimatı onaylayabilir.");
         }
 
         // 3. Durumu COMPLETED yap
@@ -132,6 +145,15 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException(
                     "Yalnızca tamamlanmış siparişler değerlendirilebilir; mevcut durum: "
                             + order.getStatus());
+        }
+
+        // 2.5. İsteği yapan müşteri, siparişi oluşturan müşteri mi?
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+
+        if (!order.getCustomer().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Yetkisiz işlem: Sadece sipariş sahibi değerlendirme yapabilir.");
         }
 
         // 3. Bu sipariş için daha önce değerlendirme yapılmış mı?

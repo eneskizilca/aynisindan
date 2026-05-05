@@ -13,6 +13,7 @@ import com.aynisindan.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.UUID;
@@ -53,9 +54,9 @@ public class QuoteServiceImpl implements QuoteService {
                 .orElseThrow(() -> new RuntimeException(
                         "Sipariş bulunamadı. ID: " + request.orderId()));
 
-        User artisan = userRepository.findById(request.artisanId())
-                .orElseThrow(() -> new RuntimeException(
-                        "Zanaatkar bulunamadı. ID: " + request.artisanId()));
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User artisan = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
 
         Quote quote = new Quote();
         quote.setOrder(order);
@@ -75,8 +76,17 @@ public class QuoteServiceImpl implements QuoteService {
                 .orElseThrow(() -> new RuntimeException(
                         "Teklif bulunamadı. ID: " + quoteId));
 
-        // 2. Bağlı siparişi al ve güncelle
+        // 2. Yetki kontrolü: Teklifi kabul eden kişi siparişin sahibi mi?
         Order order = acceptedQuote.getOrder();
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+
+        if (!order.getCustomer().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Yetkisiz işlem: Teklifi sadece sipariş sahibi kabul edebilir.");
+        }
+
+        // 3. Bağlı siparişi al ve güncelle
         order.setStatus(OrderStatus.IN_PROGRESS);
         order.setAgreedPrice(acceptedQuote.getOfferedPrice());
         order.setArtisan(acceptedQuote.getArtisan());

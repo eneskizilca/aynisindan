@@ -1,6 +1,5 @@
 package com.aynisindan.core.controller;
 
-import com.aynisindan.core.dto.request.CompleteOrderRequest;
 import com.aynisindan.core.dto.request.CreateOrderRequest;
 import com.aynisindan.core.dto.request.CreateReviewRequest;
 import com.aynisindan.core.dto.response.OrderResponse;
@@ -47,9 +46,8 @@ public class OrderController {
      */
     @PostMapping("/{orderId}/complete")
     public ResponseEntity<OrderResponse> completeOrder(
-            @PathVariable UUID orderId,
-            @RequestBody CompleteOrderRequest request) {
-        return ResponseEntity.ok(orderService.completeOrder(orderId, request));
+            @PathVariable UUID orderId) {
+        return ResponseEntity.ok(orderService.completeOrder(orderId));
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.aynisindan.core.service;
 
-import com.aynisindan.core.dto.request.CompleteOrderRequest;
 import com.aynisindan.core.dto.request.CreateOrderRequest;
 import com.aynisindan.core.dto.request.CreateReviewRequest;
 import com.aynisindan.core.dto.response.OrderResponse;
@@ -25,7 +24,7 @@ public interface OrderService {
      * Zanaatkarın siparişi teslim ettiğini kaydeder (IN_PROGRESS → DELIVERED).
      * Yalnızca atanmış zanaatkar çağırabilir.
      */
-    OrderResponse completeOrder(UUID orderId, CompleteOrderRequest request);
+    OrderResponse completeOrder(UUID orderId);
 
     /**
      * Müşterinin teslimi onaylamasını kaydeder (DELIVERED → COMPLETED).

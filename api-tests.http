@@ -1,55 +1,104 @@
-### 1. Yeni Sipariş Oluşturma (POST)
-POST http://localhost:8080/api/v1/orders
+### 0.1 Kullanıcı Kaydı (Register)
+POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json
 
 {
-  "customerId": "550e8400-e29b-41d4-a716-446655440000",
+  "fullName": "Enes Kizilca",
+  "email": "sena@example.com",
+  "password": "password123",
+  "role": "CUSTOMER"
+}
+
+
+### 0.2 Kullanıcı Girişi (Login)
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "sena@example.com",
+  "password": "password123"
+}
+
+# ---------------------------------------------------------
+
+### 0.3 Zanaatkar Kaydı (Register)
+POST http://localhost:8080/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "Usta Zanaatkar",
+  "email": "usta@example.com",
+  "password": "password123",
+  "role": "ARTISAN"
+}
+
+### 0.4 Zanaatkar Girişi (Login)
+POST http://localhost:8080/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "usta@example.com",
+  "password": "password123"
+}
+
+# ---------------------------------------------------------
+# MÜŞTERİ İŞLEMLERİ İÇİN (1, 2, 4, 6, 7, 8): Müşteri token'ını Authorization başlığına koyun.
+# ZANAATKAR İŞLEMLERİ İÇİN (3, 5): Zanaatkar token'ını Authorization başlığına koyun.
+# ---------------------------------------------------------
+
+### 1. Yeni Sipariş Oluşturma (POST)
+POST http://localhost:8080/api/v1/orders
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZW5hQGV4YW1wbGUuY29tIiwiaWF0IjoxNzc3OTc5NDQyLCJleHAiOjE3NzgwNjU4NDJ9.1NxkZWOY4UA1QfI89F2sr8ufZiyI4VTrd-6rUZll_mo
+
+{
   "title": "Özel Tasarım Ahşap Masa",
-  "description": "200x90cm ölçülerinde, ceviz ağacından, metal ayaklı çalışma masası istiyorum.",
-  "referenceImageUrl": "https://s3.amazonaws.com/aynisindan/test-masa.jpg"
+  "description": "100x80cm ölçülerinde, ceviz ağacından, metal ayaklı çalışma masası istiyorum.",
+  "referenceImageUrl": "https://s3.amazonaws.com/aynisindan/test-masa2.jpg"
 }
 
 
 ### 2. Müşterinin Siparişlerini Getirme (GET)
-GET http://localhost:8080/api/v1/orders/customer/550e8400-e29b-41d4-a716-446655440000
+GET http://localhost:8080/api/v1/orders/customer/2aa53354-9a38-4142-ba6e-5f7c9129b870
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZW5hQGV4YW1wbGUuY29tIiwiaWF0IjoxNzc3OTc5NDQyLCJleHAiOjE3NzgwNjU4NDJ9.1NxkZWOY4UA1QfI89F2sr8ufZiyI4VTrd-6rUZll_mo
 
 
 ### 3. Zanaatkarın Siparişe Teklif Vermesi (POST)
 POST http://localhost:8080/api/v1/quotes
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c3RhQGV4YW1wbGUuY29tIiwiaWF0IjoxNzc3OTc4NTkyLCJleHAiOjE3NzgwNjQ5OTJ9.qDEnbVfcF8SCxvTrHRDN0pzUalCM252nUIuwg117WfA
 
 {
-  "orderId": "d8f63763-ffe6-4034-8ac9-31134a7c1e34",
-  "artisanId": "770e8400-e29b-41d4-a716-446655440000",
-  "offeredPrice": 4500.00,
+  "orderId": "90e7e233-93e3-417b-a37e-446f3e262550",
+  "offeredPrice": 10000.00,
   "estimatedDays": 14
 }
 
 
 ### 4. Müşterinin Teklifi Kabul Etmesi (POST)  →  sipariş IN_PROGRESS + escrow holdFunds
-POST http://localhost:8080/api/v1/quotes/cb087c1f-7c8e-4bb8-ac7c-f1b4e42f5a6b/accept
+POST http://localhost:8080/api/v1/quotes/21e9fd6d-ff39-4da4-a868-0ed09b1c544c/accept
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzZW5hQGV4YW1wbGUuY29tIiwiaWF0IjoxNzc3OTc5MTg2LCJleHAiOjE3NzgwNjU1ODZ9.rbv6DnFPMQnk0LzjSyC8FqmF55pT4T4LvfMYGvACXLI
 
 
 ### 5. Zanaatkarın Siparişi Teslim Etmesi (POST)  →  sipariş DELIVERED
 POST http://localhost:8080/api/v1/orders/d8f63763-ffe6-4034-8ac9-31134a7c1e34/complete
-Content-Type: application/json
-
-{
-  "artisanId": "770e8400-e29b-41d4-a716-446655440000"
-}
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c3RhQGV4YW1wbGUuY29tIiwiaWF0IjoxNzc3OTc4NTkyLCJleHAiOjE3NzgwNjQ5OTJ9.qDEnbVfcF8SCxvTrHRDN0pzUalCM252nUIuwg117WfA
 
 
 ### 6. Ödeme Geçmişini Görme (GET)
 GET http://localhost:8080/api/v1/payments/d8f63763-ffe6-4034-8ac9-31134a7c1e34
+Authorization: Bearer BURAYA_TOKEN_YAPISTIRIN
 
 
 ### 7. Müşterinin Teslimi Onaylaması (POST)  →  sipariş COMPLETED + escrow releaseFunds
 POST http://localhost:8080/api/v1/orders/d8f63763-ffe6-4034-8ac9-31134a7c1e34/approve
+Authorization: Bearer BURAYA_TOKEN_YAPISTIRIN
 
 
 ### 8. Değerlendirme Oluşturma (POST)  →  yalnızca COMPLETED siparişler
 POST http://localhost:8080/api/v1/orders/d8f63763-ffe6-4034-8ac9-31134a7c1e34/reviews
 Content-Type: application/json
+Authorization: Bearer BURAYA_TOKEN_YAPISTIRIN
 
 {
   "rating": 5,
