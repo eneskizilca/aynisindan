@@ -24,6 +24,7 @@ public class QuoteServiceImpl implements QuoteService {
     private final QuoteRepository quoteRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final DummyEscrowService escrowService;
 
     // ─── Helpers ──────────────────────────────────────────────────────────────
 
@@ -92,6 +93,9 @@ public class QuoteServiceImpl implements QuoteService {
 
         otherQuotes.forEach(q -> q.setStatus(QuoteStatus.REJECTED));
         quoteRepository.saveAll(otherQuotes);
+
+        // 5. Kabul edilen teklif tutarını havuz hesabına al
+        escrowService.holdFunds(order.getId(), acceptedQuote.getOfferedPrice());
 
         return toResponse(quoteRepository.save(acceptedQuote));
     }

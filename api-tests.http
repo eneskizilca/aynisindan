@@ -1,4 +1,4 @@
-### 1. Yeni Sipariş Oluşturma Testi (POST)
+### 1. Yeni Sipariş Oluşturma (POST)
 POST http://localhost:8080/api/v1/orders
 Content-Type: application/json
 
@@ -10,8 +10,9 @@ Content-Type: application/json
 }
 
 
-### 2. Müşterinin Siparişlerini Getirme Testi (GET)
+### 2. Müşterinin Siparişlerini Getirme (GET)
 GET http://localhost:8080/api/v1/orders/customer/550e8400-e29b-41d4-a716-446655440000
+
 
 ### 3. Zanaatkarın Siparişe Teklif Vermesi (POST)
 POST http://localhost:8080/api/v1/quotes
@@ -24,5 +25,33 @@ Content-Type: application/json
   "estimatedDays": 14
 }
 
-### 4. Müşterinin Teklifi Kabul Etmesi (POST)
+
+### 4. Müşterinin Teklifi Kabul Etmesi (POST)  →  sipariş IN_PROGRESS + escrow holdFunds
 POST http://localhost:8080/api/v1/quotes/cb087c1f-7c8e-4bb8-ac7c-f1b4e42f5a6b/accept
+
+
+### 5. Zanaatkarın Siparişi Teslim Etmesi (POST)  →  sipariş DELIVERED
+POST http://localhost:8080/api/v1/orders/d8f63763-ffe6-4034-8ac9-31134a7c1e34/complete
+Content-Type: application/json
+
+{
+  "artisanId": "770e8400-e29b-41d4-a716-446655440000"
+}
+
+
+### 6. Ödeme Geçmişini Görme (GET)
+GET http://localhost:8080/api/v1/payments/d8f63763-ffe6-4034-8ac9-31134a7c1e34
+
+
+### 7. Müşterinin Teslimi Onaylaması (POST)  →  sipariş COMPLETED + escrow releaseFunds
+POST http://localhost:8080/api/v1/orders/d8f63763-ffe6-4034-8ac9-31134a7c1e34/approve
+
+
+### 8. Değerlendirme Oluşturma (POST)  →  yalnızca COMPLETED siparişler
+POST http://localhost:8080/api/v1/orders/d8f63763-ffe6-4034-8ac9-31134a7c1e34/reviews
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "comment": "Masa tam istediğim gibi oldu, çok memnun kaldım!"
+}
