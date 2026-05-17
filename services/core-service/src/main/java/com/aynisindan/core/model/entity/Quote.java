@@ -33,6 +33,9 @@ public class Quote {
     @Column(nullable = false)
     private Integer estimatedDays;
 
+    @Column(columnDefinition = "TEXT")
+    private String message;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private QuoteStatus status = QuoteStatus.PENDING;
@@ -89,6 +92,14 @@ public class Quote {
 
     public void setEstimatedDays(Integer estimatedDays) {
         this.estimatedDays = estimatedDays;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public QuoteStatus getStatus() {

@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Artisanal Trust System – Color Tokens ─────────────────────────── */
+  --color-primary:                 #de6b48;
+  --color-primary-hover:           #c45a38;
+  --color-primary-container:       #bd5538;
+  --color-on-primary:              #ffffff;
+  --color-surface:                 #fff8f6;
+  --color-surface-dim:             #e9d6d1;
+  --color-surface-low:             #fff1ed;
+  --color-surface-container:       #feeae5;
+  --color-surface-high:            #f8e4df;
+  --color-surface-highest:         #f2ded9;
+  --color-surface-white:           #ffffff;
+  --color-on-surface:              #231916;
+  --color-on-surface-variant:      #56423d;
+  --color-outline:                 #8a726b;
+  --color-outline-variant:         #ddc0b9;
+  --color-error:                   #ba1a1a;
+  --color-secondary:               #5d5e61;
+  --color-background:              #fff8f6;
+
+  /* ── Status Colors ────────────────────────────────────────────────── */
+  --color-status-pending-bg:       #fff8e1;
+  --color-status-pending-text:     #f59e0b;
+  --color-status-in-progress-bg:   #e0f2fe;
+  --color-status-in-progress-text: #0369a1;
+  --color-status-delivered-bg:     #ede9fe;
+  --color-status-delivered-text:   #6d28d9;
+  --color-status-completed-bg:     #dcfce7;
+  --color-status-completed-text:   #15803d;
+  --color-status-cancelled-bg:     #fee2e2;
+  --color-status-cancelled-text:   #dc2626;
+
+  /* ── Typography ───────────────────────────────────────────────────── */
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+
+  /* ── Border Radius ────────────────────────────────────────────────── */
+  --radius-sm:   0.25rem;
+  --radius-md:   0.5rem;
+  --radius-lg:   0.75rem;
+  --radius-xl:   1rem;
+  --radius-2xl:  1.5rem;
+  --radius-full: 9999px;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body {
+    font-family: var(--font-sans);
+    background-color: var(--color-background);
+    color: var(--color-on-surface);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ── Shared Component Classes ──────────────────────────────────────────── */
+@layer components {
+  .btn-primary {
+    @apply bg-[#de6b48] text-white font-semibold px-6 py-3 rounded-lg
+           hover:bg-[#c45a38] active:scale-[0.98] transition-all duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-[#231916] font-semibold px-6 py-3 rounded-lg border border-[#231916]
+           hover:bg-[#fff1ed] active:scale-[0.98] transition-all duration-150 cursor-pointer;
+  }
+
+  .btn-outline-primary {
+    @apply bg-white text-[#de6b48] font-semibold px-6 py-3 rounded-lg border border-[#de6b48]
+           hover:bg-[#fff1ed] active:scale-[0.98] transition-all duration-150 cursor-pointer;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-[#ddc0b9] bg-white
+           text-[#231916] placeholder-[#8a726b]
+           focus:outline-none focus:ring-2 focus:ring-[#de6b48] focus:border-transparent
+           transition-all duration-150;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-[#e9d6d1] hover:shadow-md transition-shadow duration-200;
+  }
+
+  .status-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .status-pending {
+    @apply bg-amber-50 text-amber-500;
+  }
+
+  .status-in-progress {
+    @apply bg-sky-50 text-sky-700;
+  }
+
+  .status-delivered {
+    @apply bg-violet-50 text-violet-700;
+  }
+
+  .status-completed {
+    @apply bg-green-50 text-green-700;
+  }
+
+  .status-cancelled {
+    @apply bg-red-50 text-red-600;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-[#56423d] font-medium
+           hover:bg-[#feeae5] hover:text-[#de6b48] transition-all duration-150 cursor-pointer;
+  }
+
+  .sidebar-link-active {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-white font-medium
+           bg-[#de6b48] cursor-pointer;
+  }
+}

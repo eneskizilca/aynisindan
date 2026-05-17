@@ -42,4 +42,13 @@ public class QuoteController {
         QuoteResponse response = quoteService.acceptQuote(quoteId);
         return ResponseEntity.ok(response);
     }
+
+    /**
+     * GET /api/v1/quotes/order/{orderId}
+     * Siparişe ait tüm teklifleri getirir.
+     */
+    @GetMapping("/order/{orderId}")
+    public ResponseEntity<java.util.List<QuoteResponse>> getQuotesByOrder(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(quoteService.getQuotesByOrder(orderId));
+    }
 }

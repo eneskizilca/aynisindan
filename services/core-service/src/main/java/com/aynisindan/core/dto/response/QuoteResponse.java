@@ -12,8 +12,10 @@ public record QuoteResponse(
         UUID id,
         UUID orderId,
         UUID artisanId,
+        String artisanName,
         BigDecimal offeredPrice,
         Integer estimatedDays,
+        String message,
         String status,
         LocalDateTime createdAt
 ) {}

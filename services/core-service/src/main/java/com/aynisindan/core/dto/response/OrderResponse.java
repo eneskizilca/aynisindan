@@ -13,5 +13,9 @@ public record OrderResponse(
         String description,
         String referenceImageUrl,
         String status,
-        LocalDateTime createdAt
+        UUID customerId,
+        String customerName,
+        String artisanName,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {}

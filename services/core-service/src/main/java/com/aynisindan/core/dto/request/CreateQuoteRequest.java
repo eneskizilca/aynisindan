@@ -9,5 +9,6 @@ import java.util.UUID;
 public record CreateQuoteRequest(
         UUID orderId,
         BigDecimal offeredPrice,
-        Integer estimatedDays
+        Integer estimatedDays,
+        String message
 ) {}
