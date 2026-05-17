@@ -5,10 +5,14 @@ import com.aynisindan.core.dto.request.CreateReviewRequest;
 import com.aynisindan.core.dto.response.OrderResponse;
 import com.aynisindan.core.dto.response.ReviewResponse;
 import com.aynisindan.core.service.OrderService;
+import com.aynisindan.core.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import java.util.Collections;
+import java.util.Map;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +23,7 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderService orderService;
+    private final StorageService storageService;
 
     /**
      * GET /api/v1/orders
@@ -37,6 +42,16 @@ public class OrderController {
     public ResponseEntity<OrderResponse> createOrder(@RequestBody CreateOrderRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(orderService.createOrder(request));
+    }
+
+    /**
+     * POST /api/v1/orders/upload-sketch
+     * Uploads a reference image/sketch to S3.
+     */
+    @PostMapping("/upload-sketch")
+    public ResponseEntity<Map<String, String>> uploadSketch(@RequestParam("file") MultipartFile file) {
+        String fileUrl = storageService.uploadFile(file);
+        return ResponseEntity.ok(Collections.singletonMap("url", fileUrl));
     }
 
     /**

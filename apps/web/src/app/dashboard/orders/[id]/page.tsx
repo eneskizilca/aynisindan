@@ -162,10 +162,10 @@ export default function OrderDetailPage() {
             <img
               src={order.referenceImageUrl}
               alt={order.title}
-              className="w-full h-[400px] object-cover rounded-xl shadow-sm"
+              className="w-full aspect-square object-cover rounded-xl shadow-sm"
             />
           ) : (
-            <div className="w-full h-[400px] bg-[#feeae5] rounded-xl flex items-center justify-center text-[#8a726b] text-sm shadow-sm">
+            <div className="w-full aspect-square bg-[#feeae5] rounded-xl flex items-center justify-center text-[#8a726b] text-sm shadow-sm">
               Referans görsel yok
             </div>
           )}

@@ -13,7 +13,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d aynisindan_core"]
+      test: [ "CMD-SHELL", "pg_isready -U admin -d aynisindan_core" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -31,6 +31,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aynisindan_core
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_REGION: ${AWS_REGION}
     depends_on:
       postgres:
         condition: service_healthy

@@ -94,6 +94,15 @@ export const ordersApi = {
   approveOrder: (id: string) => api.post(`/orders/${id}/approve`),
   getCustomerOrders: (customerId: string) =>
     api.get<Order[]>(`/orders/customer/${customerId}`),
+  uploadSketch: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post<{ url: string }>('/orders/upload-sketch', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 };
 
 // ─── Quotes ──────────────────────────────────────────────────────────────────

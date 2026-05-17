@@ -35,7 +35,7 @@ export default function Sidebar({ activePage }: SidebarProps) {
   ];
 
   return (
-    <aside className="w-60 shrink-0 flex flex-col bg-[#fff8f6] border-r border-[#e9d6d1] min-h-screen py-6 px-3">
+    <aside className="w-60 shrink-0 flex flex-col bg-[#fff8f6] border-r border-[#e9d6d1] h-full overflow-y-auto py-6 px-3">
       {/* Marka */}
       <div className="px-3 mb-6 flex items-center gap-3">
         <Image src="/logo.svg" alt="Aynısından" width={48} height={48} className="object-contain flex-shrink-0" />
