@@ -38,8 +38,10 @@ public class QuoteServiceImpl implements QuoteService {
                 quote.getId(),
                 quote.getOrder().getId(),
                 quote.getArtisan().getId(),
+                quote.getArtisan().getFullName(),
                 quote.getOfferedPrice(),
                 quote.getEstimatedDays(),
+                quote.getMessage(),
                 quote.getStatus().name(),
                 quote.getCreatedAt()
         );
@@ -63,6 +65,7 @@ public class QuoteServiceImpl implements QuoteService {
         quote.setArtisan(artisan);
         quote.setOfferedPrice(request.offeredPrice());
         quote.setEstimatedDays(request.estimatedDays());
+        quote.setMessage(request.message());
         quote.setStatus(QuoteStatus.PENDING);
 
         return toResponse(quoteRepository.save(quote));
@@ -108,5 +111,14 @@ public class QuoteServiceImpl implements QuoteService {
         escrowService.holdFunds(order.getId(), acceptedQuote.getOfferedPrice());
 
         return toResponse(quoteRepository.save(acceptedQuote));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuoteResponse> getQuotesByOrder(UUID orderId) {
+        return quoteRepository.findByOrder_Id(orderId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
     }
 }

@@ -1,0 +1,53 @@
+services:
+  # ───────── PostgreSQL ─────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: aynisindan-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: aynisindan_core
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d aynisindan_core"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ───────── Spring Boot Backend ─────────
+  backend:
+    build:
+      context: ./services/core-service
+      dockerfile: Dockerfile
+    container_name: aynisindan-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aynisindan_core
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ───────── Next.js Frontend ─────────
+  frontend:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    container_name: aynisindan-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

@@ -37,11 +37,31 @@ public class OrderServiceImpl implements OrderService {
                 order.getDescription(),
                 order.getReferenceImageUrl(),
                 order.getStatus().name(),
-                order.getCreatedAt()
+                order.getCustomer().getId(),
+                order.getCustomer().getFullName(),
+                order.getArtisan() != null ? order.getArtisan().getFullName() : null,
+                order.getCreatedAt(),
+                order.getUpdatedAt()
         );
     }
 
     // ─── Service Methods ───────────────────────────────────────────────────────
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getMyOrders() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+
+        List<Order> orders;
+        if ("ARTISAN".equals(currentUser.getRole().name())) {
+            orders = orderRepository.findByArtisan_Id(currentUser.getId());
+        } else {
+            orders = orderRepository.findByCustomer_Id(currentUser.getId());
+        }
+        return orders.stream().map(this::toResponse).toList();
+    }
 
     @Override
     @Transactional
@@ -67,6 +87,14 @@ public class OrderServiceImpl implements OrderService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderResponse getOrderById(UUID orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Sipariş bulunamadı. ID: " + orderId));
+        return toResponse(order);
     }
 
     @Override

@@ -118,7 +118,7 @@ export default function OrderDetailPage() {
   const isArtisan = user?.role === 'ARTISAN';
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8 w-full max-w-3xl mx-auto">
       {/* Geri + Başlık */}
       <div className="flex items-center gap-3 mb-5">
         <Link href="/dashboard/orders" className="flex items-center gap-1.5 text-[#56423d] text-sm hover:text-[#de6b48] transition-colors">
@@ -155,45 +155,24 @@ export default function OrderDetailPage() {
       </div>
 
       {/* Ana düzen */}
-      <div className="flex gap-6">
-        {/* Sol: Referans görsel + detaylar */}
-        <div className="w-72 shrink-0">
+      <div className="flex flex-col gap-6">
+        {/* Referans Görsel */}
+        <div className="w-full">
           {order.referenceImageUrl ? (
             <img
               src={order.referenceImageUrl}
               alt={order.title}
-              className="w-full h-52 object-cover rounded-xl mb-4"
+              className="w-full h-[400px] object-cover rounded-xl shadow-sm"
             />
           ) : (
-            <div className="w-full h-52 bg-[#feeae5] rounded-xl flex items-center justify-center mb-4 text-[#8a726b] text-sm">
+            <div className="w-full h-[400px] bg-[#feeae5] rounded-xl flex items-center justify-center text-[#8a726b] text-sm shadow-sm">
               Referans görsel yok
             </div>
           )}
-          <div className="card p-4">
-            <h3 className="font-semibold text-[#231916] mb-3">Sipariş Detayları</h3>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-[#56423d]">Durum</span>
-                <span className="font-medium text-[#231916]">{DURUM_ETIKETLERI[order.status]}</span>
-              </div>
-              {order.artisanName && (
-                <div className="flex justify-between">
-                  <span className="text-[#56423d]">Zanaatkâr</span>
-                  <span className="font-medium text-[#231916]">{order.artisanName}</span>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span className="text-[#56423d]">Oluşturulma</span>
-                <span className="font-medium text-[#231916]">
-                  {new Date(order.createdAt).toLocaleDateString('tr-TR')}
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* Sağ: Teklifler / Teslimat / Değerlendirme */}
-        <div className="flex-1 space-y-5">
+        {/* Teklifler / Teslimat / Değerlendirme */}
+        <div className="w-full space-y-5">
           {/* Teklifler (müşteri, PENDING sipariş) */}
           {isCustomer && order.status === 'PENDING' && (
             <>
@@ -339,6 +318,31 @@ export default function OrderDetailPage() {
           {error && (
             <p className="text-red-600 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</p>
           )}
+        </div>
+
+        {/* Sipariş Detayları */}
+        <div className="card p-6 w-full mt-4">
+          <h3 className="font-semibold text-[#231916] mb-4 text-lg border-b border-[#e9d6d1] pb-3">Sipariş Detayları</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm">
+            <div>
+              <span className="block text-[#8a726b] mb-1">Durum</span>
+              <span className="font-semibold text-[#231916] px-2 py-1 bg-[#f2ded9] rounded inline-block">
+                {DURUM_ETIKETLERI[order.status] || order.status}
+              </span>
+            </div>
+            {order.artisanName && (
+              <div>
+                <span className="block text-[#8a726b] mb-1">Zanaatkâr</span>
+                <span className="font-medium text-[#231916]">{order.artisanName}</span>
+              </div>
+            )}
+            <div>
+              <span className="block text-[#8a726b] mb-1">Oluşturulma</span>
+              <span className="font-medium text-[#231916]">
+                {new Date(order.createdAt).toLocaleDateString('tr-TR')}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

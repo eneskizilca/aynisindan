@@ -21,6 +21,15 @@ public class OrderController {
     private final OrderService orderService;
 
     /**
+     * GET /api/v1/orders
+     * JWT'deki kullanıcıya ait tüm siparişleri listeler.
+     */
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> getMyOrders() {
+        return ResponseEntity.ok(orderService.getMyOrders());
+    }
+
+    /**
      * POST /api/v1/orders
      * Yeni bir sipariş oluşturur.
      */
@@ -37,6 +46,15 @@ public class OrderController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<OrderResponse>> getCustomerOrders(@PathVariable UUID customerId) {
         return ResponseEntity.ok(orderService.getCustomerOrders(customerId));
+    }
+
+    /**
+     * GET /api/v1/orders/{orderId}
+     * Sipariş detaylarını getirir.
+     */
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderResponse> getOrderById(@PathVariable UUID orderId) {
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
 
     /**

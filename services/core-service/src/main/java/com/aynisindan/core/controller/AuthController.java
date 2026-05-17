@@ -42,7 +42,13 @@ public class AuthController {
 
         userRepository.save(user);
         String jwtToken = jwtService.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(jwtToken));
+        return ResponseEntity.ok(new AuthResponse(
+                jwtToken,
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().name()
+        ));
     }
 
     @PostMapping("/login")
@@ -58,6 +64,12 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         String jwtToken = jwtService.generateToken(user);
-        return ResponseEntity.ok(new AuthResponse(jwtToken));
+        return ResponseEntity.ok(new AuthResponse(
+                jwtToken,
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                user.getRole().name()
+        ));
     }
 }

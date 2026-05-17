@@ -17,4 +17,9 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
      * @return müşteriye ait sipariş listesi
      */
     List<Order> findByCustomer_Id(UUID customerId);
+
+    /**
+     * Belirli bir zanaatkâra atanmış tüm siparişleri getirir.
+     */
+    List<Order> findByArtisan_Id(UUID artisanId);
 }

@@ -11,9 +11,20 @@ import java.util.UUID;
 public interface OrderService {
 
     /**
+     * JWT'deki kullanıcının rolüne göre siparişleri listeler.
+     * CUSTOMER ise kendi siparişlerini, ARTISAN ise atanmış siparişleri döner.
+     */
+    List<OrderResponse> getMyOrders();
+
+    /**
      * Yeni bir sipariş oluşturur ve OrderResponse döner.
      */
     OrderResponse createOrder(CreateOrderRequest request);
+
+    /**
+     * Siparişi ID'sine göre getirir.
+     */
+    OrderResponse getOrderById(UUID orderId);
 
     /**
      * Verilen müşteri ID'sine göre tüm siparişleri listeler.

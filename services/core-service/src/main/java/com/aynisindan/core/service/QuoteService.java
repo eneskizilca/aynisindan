@@ -25,4 +25,9 @@ public interface QuoteService {
      * @return güncellenen teklifin DTO karşılığı
      */
     QuoteResponse acceptQuote(UUID quoteId);
+
+    /**
+     * Siparişe ait teklifleri getirir.
+     */
+    java.util.List<QuoteResponse> getQuotesByOrder(UUID orderId);
 }

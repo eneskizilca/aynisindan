@@ -33,7 +33,7 @@ export default function NewOrderPage() {
   };
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-8 w-full max-w-2xl mx-auto">
       {/* Geri */}
       <Link href="/dashboard/orders" className="flex items-center gap-2 text-[#56423d] text-sm hover:text-[#de6b48] mb-6 transition-colors">
         <ArrowLeftIcon className="w-4 h-4" />
