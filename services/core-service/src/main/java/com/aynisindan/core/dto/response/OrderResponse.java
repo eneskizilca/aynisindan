@@ -1,12 +1,9 @@
 package com.aynisindan.core.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Sipariş sorgularında istemciye dönen DTO.
- * Entity'nin hassas/gereksiz alanları burada gizlenir.
- */
 public record OrderResponse(
         UUID id,
         String title,
@@ -16,6 +13,8 @@ public record OrderResponse(
         UUID customerId,
         String customerName,
         String artisanName,
+        BigDecimal agreedPrice,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        Boolean hasActiveReturn
 ) {}

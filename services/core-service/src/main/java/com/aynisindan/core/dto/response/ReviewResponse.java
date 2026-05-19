@@ -9,6 +9,7 @@ import java.util.UUID;
 public record ReviewResponse(
         UUID id,
         UUID orderId,
+        UUID artisanId,
         Integer rating,
         String comment,
         LocalDateTime createdAt

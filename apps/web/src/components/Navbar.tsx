@@ -70,7 +70,7 @@ export default function Navbar({ activePage }: NavbarProps) {
   return (
     <>
       {/* ─── Desktop Navbar ─────────────────────────────────────── */}
-      <nav className="hidden lg:flex items-center justify-between h-16 px-6 bg-white border-b border-[#e9d6d1] sticky top-0 z-50">
+      <nav className="hidden lg:flex lg:items-center lg:justify-between h-16 px-6 bg-white border-b border-[#e9d6d1] sticky top-0 z-50">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 flex-shrink-0">
           <Image src="/logo.svg" alt="Aynısından" width={40} height={40} className="object-contain" />
@@ -81,12 +81,12 @@ export default function Navbar({ activePage }: NavbarProps) {
         </Link>
 
         {/* Nav Links */}
-        <div className="flex items-center gap-1">
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
           {navItems.map(({ key, label, href, Icon }) => (
             <Link
               key={key}
               href={href}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-base font-medium transition-colors ${
                 activePage === key
                   ? 'bg-[#fff1ed] text-[#de6b48]'
                   : 'text-[#56423d] hover:bg-[#fff8f6] hover:text-[#de6b48]'
@@ -99,7 +99,7 @@ export default function Navbar({ activePage }: NavbarProps) {
         </div>
 
         {/* Sağ taraf */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-end gap-3">
           {!isArtisan && (
             <Link href="/orders/new" className="btn-primary flex items-center gap-2 text-sm px-4 py-2">
               <PlusIcon className="w-4 h-4" />
@@ -111,10 +111,10 @@ export default function Navbar({ activePage }: NavbarProps) {
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileOpen(!profileOpen)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#fff8f6] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#fff8f6] transition-colors cursor-pointer"
             >
               <UserCircleIcon className="w-6 h-6 text-[#56423d]" />
-              <span className="text-sm font-medium text-[#231916] max-w-32 truncate">
+              <span className="text-base font-medium text-[#231916] max-w-32 truncate">
                 {user?.fullName}
               </span>
               <ChevronDownIcon className={`w-4 h-4 text-[#56423d] transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
@@ -136,14 +136,14 @@ export default function Navbar({ activePage }: NavbarProps) {
                 <Link
                   href="/settings"
                   onClick={() => setProfileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#56423d] hover:bg-[#fff8f6] transition-colors"
+                  className="flex items-center gap-3 px-4 py-2.5 text-[15px] text-[#56423d] hover:bg-[#fff8f6] transition-colors"
                 >
                   <Cog6ToothIcon className="w-4 h-4" />
                   Ayarlar
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-2.5 text-[15px] text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                 >
                   <ArrowRightOnRectangleIcon className="w-4 h-4" />
                   Çıkış Yap
