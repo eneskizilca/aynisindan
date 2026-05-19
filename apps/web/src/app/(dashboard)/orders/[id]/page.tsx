@@ -34,7 +34,6 @@ export default function OrderDetailPage() {
   const [isApproving, setIsApproving] = useState(false);
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
-  // Değerlendirme durumu
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
@@ -118,29 +117,27 @@ export default function OrderDetailPage() {
   const isArtisan = user?.role === 'ARTISAN';
 
   return (
-    <div className="p-8 w-full max-w-3xl mx-auto">
-      {/* Geri + Başlık */}
-      <div className="flex items-center gap-3 mb-5">
-        <Link href="/dashboard/orders" className="flex items-center gap-1.5 text-[#56423d] text-sm hover:text-[#de6b48] transition-colors">
+    <div className="p-4 sm:p-8 w-full max-w-3xl mx-auto">
+      <div className="flex items-center gap-3 mb-4 sm:mb-5">
+        <Link href="/orders" className="flex items-center gap-1.5 text-[#56423d] text-sm hover:text-[#de6b48] transition-colors">
           <ArrowLeftIcon className="w-4 h-4" /> Siparişlere Dön
         </Link>
       </div>
 
-      <div className="flex items-start gap-6 mb-8">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
+      <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 mb-6 sm:mb-8">
+        <div className="flex-1 w-full">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
             <span className="text-xs font-semibold text-[#56423d] uppercase tracking-widest bg-[#f2ded9] px-2 py-1 rounded">
               {DURUM_ETIKETLERI[order.status] || order.status}
             </span>
             <span className="text-xs text-[#8a726b]">Sipariş #{order.id.slice(0, 8).toUpperCase()}</span>
           </div>
-          <h1 className="text-[#231916] font-bold text-3xl">{order.title}</h1>
-          <p className="text-[#56423d] text-sm mt-2 leading-relaxed max-w-xl">{order.description}</p>
+          <h1 className="text-[#231916] font-bold text-2xl sm:text-3xl">{order.title}</h1>
+          <p className="text-[#56423d] text-sm mt-2 leading-relaxed">{order.description}</p>
         </div>
 
-        {/* Param-Güvende bildirimi */}
         {(order.status === 'IN_PROGRESS' || order.status === 'DELIVERED') && (
-          <div className="bg-[#fff1ed] border border-[#ddc0b9] rounded-xl p-4 max-w-xs">
+          <div className="bg-[#fff1ed] border border-[#ddc0b9] rounded-xl p-4 w-full sm:max-w-xs">
             <div className="flex items-start gap-2">
               <ShieldCheckIcon className="w-5 h-5 text-[#de6b48] flex-shrink-0 mt-0.5" />
               <div>
@@ -154,9 +151,7 @@ export default function OrderDetailPage() {
         )}
       </div>
 
-      {/* Ana düzen */}
       <div className="flex flex-col gap-6">
-        {/* Referans Görsel */}
         <div className="w-full">
           {order.referenceImageUrl ? (
             <img
@@ -171,9 +166,7 @@ export default function OrderDetailPage() {
           )}
         </div>
 
-        {/* Teklifler / Teslimat / Değerlendirme */}
         <div className="w-full space-y-5">
-          {/* Teklifler (müşteri, PENDING sipariş) */}
           {isCustomer && order.status === 'PENDING' && (
             <>
               <div className="flex items-center justify-between">
@@ -204,12 +197,10 @@ export default function OrderDetailPage() {
             </>
           )}
 
-          {/* Zanaatkâr teklif formu */}
           {isArtisan && order.status === 'PENDING' && (
             <ArtisanQuoteForm orderId={order.id} onSuccess={fetchData} />
           )}
 
-          {/* Teslimat onayı (müşteri, DELIVERED sipariş) */}
           {isCustomer && order.status === 'DELIVERED' && (
             <div className="card">
               <div className="p-6 border-b border-[#e9d6d1] flex items-center gap-4">
@@ -248,7 +239,6 @@ export default function OrderDetailPage() {
             </div>
           )}
 
-          {/* Değerlendirme (müşteri, COMPLETED sipariş) */}
           {isCustomer && order.status === 'COMPLETED' && !reviewDone && (
             <div className="card p-6">
               <h2 className="text-[#231916] font-bold text-xl text-center mb-5">
@@ -256,7 +246,6 @@ export default function OrderDetailPage() {
               </h2>
 
               <form onSubmit={handleSubmitReview} className="space-y-5">
-                {/* Yıldızlar */}
                 <div className="flex items-center justify-center gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -320,7 +309,6 @@ export default function OrderDetailPage() {
           )}
         </div>
 
-        {/* Sipariş Detayları */}
         <div className="card p-6 w-full mt-4">
           <h3 className="font-semibold text-[#231916] mb-4 text-lg border-b border-[#e9d6d1] pb-3">Sipariş Detayları</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-sm">
@@ -349,7 +337,6 @@ export default function OrderDetailPage() {
   );
 }
 
-// ─── Zanaatkâr Teklif Formu ───────────────────────────────────────────────────
 function ArtisanQuoteForm({ orderId, onSuccess }: { orderId: string; onSuccess: () => void }) {
   const [price, setPrice] = useState('');
   const [days, setDays] = useState('');

@@ -112,14 +112,4 @@
   .status-cancelled {
     @apply bg-red-50 text-red-600;
   }
-
-  .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-[#56423d] font-medium
-           hover:bg-[#feeae5] hover:text-[#de6b48] transition-all duration-150 cursor-pointer;
-  }
-
-  .sidebar-link-active {
-    @apply flex items-center gap-3 px-4 py-3 rounded-lg text-white font-medium
-           bg-[#de6b48] cursor-pointer;
-  }
 }

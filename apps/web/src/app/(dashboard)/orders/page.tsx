@@ -30,22 +30,20 @@ export default function OrdersPage() {
   const viewMode = user?.role === 'ARTISAN' ? 'artisan' : 'customer';
 
   return (
-    <div className="p-8">
-      {/* Başlık */}
-      <div className="flex items-start justify-between mb-8 border-b border-[#e9d6d1] pb-6">
+    <div className="p-4 sm:p-8">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-6 sm:mb-8 border-b border-[#e9d6d1] pb-4 sm:pb-6">
         <div>
-          <h1 className="text-[#231916] font-bold text-3xl">Siparişlerim</h1>
+          <h1 className="text-[#231916] font-bold text-2xl sm:text-3xl">Siparişlerim</h1>
           <p className="text-[#56423d] text-sm mt-1">
-            Mevcut projelerinizi yönetin ve Param-Güvende durumlarını takip edin.
+            Mevcut projelerinizi yönetin ve Param-Güvende durumlarınızı takip edin.
           </p>
         </div>
-        <Link href="/dashboard/orders/new" className="btn-primary flex items-center gap-2">
+        <Link href="/orders/new" className="btn-primary flex items-center gap-2 whitespace-nowrap">
           <PlusIcon className="w-4 h-4" />
           Yeni Sipariş
         </Link>
       </div>
 
-      {/* İçerik */}
       {isLoading ? (
         <div className="flex items-center justify-center py-24">
           <div className="w-8 h-8 border-4 border-[#de6b48] border-t-transparent rounded-full animate-spin" />
@@ -63,7 +61,7 @@ export default function OrdersPage() {
           <p className="text-[#56423d] text-sm mb-6">
             İlk özel siparişinizi oluşturun.
           </p>
-          <Link href="/dashboard/orders/new" className="btn-primary">
+          <Link href="/orders/new" className="btn-primary">
             Yeni Sipariş Oluştur
           </Link>
         </div>

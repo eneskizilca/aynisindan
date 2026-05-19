@@ -66,16 +66,16 @@ export default function OrderCard({ order, viewMode = 'customer' }: OrderCardPro
         : 'Detayları Gör →';
 
   return (
-    <div className="card flex gap-5 p-5">
+    <div className="card flex flex-col sm:flex-row gap-4 sm:gap-5 p-4 sm:p-5">
       {/* Görsel */}
       {order.referenceImageUrl ? (
         <img
           src={order.referenceImageUrl}
           alt={order.title}
-          className="w-40 h-36 object-cover rounded-lg flex-shrink-0"
+          className="w-full sm:w-40 h-48 sm:h-36 object-cover rounded-lg flex-shrink-0"
         />
       ) : (
-        <div className="w-40 h-36 bg-[#feeae5] rounded-lg flex-shrink-0 flex items-center justify-center text-[#de6b48] text-xs font-medium">
+        <div className="w-full sm:w-40 h-48 sm:h-36 bg-[#feeae5] rounded-lg flex-shrink-0 flex items-center justify-center text-[#de6b48] text-xs font-medium">
           Görsel Yok
         </div>
       )}
@@ -109,7 +109,7 @@ export default function OrderCard({ order, viewMode = 'customer' }: OrderCardPro
         <div className="flex items-center justify-between mt-3">
           <ParamGuvendeRozeti status={order.status} />
           <Link
-            href={`/dashboard/orders/${order.id}`}
+            href={`/orders/${order.id}`}
             className="text-[#de6b48] text-sm font-semibold hover:underline"
           >
             {actionLabel}

@@ -11,6 +11,7 @@ import java.util.UUID;
 public record QuoteResponse(
         UUID id,
         UUID orderId,
+        String orderTitle,
         UUID artisanId,
         String artisanName,
         BigDecimal offeredPrice,

@@ -17,6 +17,11 @@ public interface OrderService {
     List<OrderResponse> getMyOrders();
 
     /**
+     * Tüm PENDING durumdaki siparişleri listeler (zanaatkarlar için iş fırsatları).
+     */
+    List<OrderResponse> getAllPendingOrders();
+
+    /**
      * Yeni bir sipariş oluşturur ve OrderResponse döner.
      */
     OrderResponse createOrder(CreateOrderRequest request);

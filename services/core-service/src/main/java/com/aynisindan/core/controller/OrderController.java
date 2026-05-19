@@ -35,6 +35,15 @@ public class OrderController {
     }
 
     /**
+     * GET /api/v1/orders/pending
+     * Tüm PENDING durumdaki siparişleri listeler (zanaatkarlar için iş fırsatları).
+     */
+    @GetMapping("/pending")
+    public ResponseEntity<List<OrderResponse>> getAllPendingOrders() {
+        return ResponseEntity.ok(orderService.getAllPendingOrders());
+    }
+
+    /**
      * POST /api/v1/orders
      * Yeni bir sipariş oluşturur.
      */

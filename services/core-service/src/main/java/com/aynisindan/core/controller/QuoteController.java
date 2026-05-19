@@ -51,4 +51,13 @@ public class QuoteController {
     public ResponseEntity<java.util.List<QuoteResponse>> getQuotesByOrder(@PathVariable UUID orderId) {
         return ResponseEntity.ok(quoteService.getQuotesByOrder(orderId));
     }
+
+    /**
+     * GET /api/v1/quotes/my
+     * Zanaatkârın kendi tekliflerini getirir.
+     */
+    @GetMapping("/my")
+    public ResponseEntity<java.util.List<QuoteResponse>> getMyQuotes() {
+        return ResponseEntity.ok(quoteService.getMyQuotes());
+    }
 }

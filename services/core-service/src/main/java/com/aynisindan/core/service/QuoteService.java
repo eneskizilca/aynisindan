@@ -30,4 +30,9 @@ public interface QuoteService {
      * Siparişe ait teklifleri getirir.
      */
     java.util.List<QuoteResponse> getQuotesByOrder(UUID orderId);
+
+    /**
+     * Zanaatkârın kendi tekliflerini getirir.
+     */
+    java.util.List<QuoteResponse> getMyQuotes();
 }

@@ -31,12 +31,13 @@ public class QuoteServiceImpl implements QuoteService {
 
     /**
      * Quote entity'sini QuoteResponse DTO'suna dönüştürür.
-     * İlişkili entity'lerden sadece UUID'leri alarak lazy-load sorunlarını önler.
+     * orderTitle alanı da eklenmiştir.
      */
     private QuoteResponse toResponse(Quote quote) {
         return new QuoteResponse(
                 quote.getId(),
                 quote.getOrder().getId(),
+                quote.getOrder().getTitle(),
                 quote.getArtisan().getId(),
                 quote.getArtisan().getFullName(),
                 quote.getOfferedPrice(),
@@ -117,6 +118,19 @@ public class QuoteServiceImpl implements QuoteService {
     @Transactional(readOnly = true)
     public List<QuoteResponse> getQuotesByOrder(UUID orderId) {
         return quoteRepository.findByOrder_Id(orderId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<QuoteResponse> getMyQuotes() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User artisan = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+
+        return quoteRepository.findByArtisan_Id(artisan.getId())
                 .stream()
                 .map(this::toResponse)
                 .toList();

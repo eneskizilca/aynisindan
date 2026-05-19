@@ -17,4 +17,12 @@ public interface QuoteRepository extends JpaRepository<Quote, UUID> {
      * @return siparişe ait teklif listesi
      */
     List<Quote> findByOrder_Id(UUID orderId);
+
+    /**
+     * Belirli bir zanaatkâra ait tüm teklifleri getirir.
+     *
+     * @param artisanId zanaatkârın UUID'si
+     * @return zanaatkâra ait teklif listesi
+     */
+    List<Quote> findByArtisan_Id(UUID artisanId);
 }

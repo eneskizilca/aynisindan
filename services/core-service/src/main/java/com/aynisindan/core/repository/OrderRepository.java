@@ -22,4 +22,9 @@ public interface OrderRepository extends JpaRepository<Order, UUID> {
      * Belirli bir zanaatkâra atanmış tüm siparişleri getirir.
      */
     List<Order> findByArtisan_Id(UUID artisanId);
+
+    /**
+     * Belirli bir durumdaki tüm siparişleri getirir.
+     */
+    List<Order> findByStatus(com.aynisindan.core.model.enums.OrderStatus status);
 }
