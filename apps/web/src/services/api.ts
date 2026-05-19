@@ -88,6 +88,7 @@ export interface CreateOrderPayload {
 
 export const ordersApi = {
   getMyOrders: () => api.get<Order[]>('/orders'),
+  getAllPendingOrders: () => api.get<Order[]>('/orders/pending'),
   getOrderById: (id: string) => api.get<Order>(`/orders/${id}`),
   createOrder: (data: CreateOrderPayload) => api.post<Order>('/orders', data),
   completeOrder: (id: string) => api.post(`/orders/${id}/complete`),
@@ -109,6 +110,7 @@ export const ordersApi = {
 export interface Quote {
   id: string;
   orderId: string;
+  orderTitle?: string;
   artisanId: string;
   artisanName: string;
   artisanRating?: number;
@@ -131,6 +133,7 @@ export interface CreateQuotePayload {
 export const quotesApi = {
   getQuotesByOrder: (orderId: string) =>
     api.get<Quote[]>(`/quotes/order/${orderId}`),
+  getMyQuotes: () => api.get<Quote[]>('/quotes/my'),
   createQuote: (data: CreateQuotePayload) => api.post<Quote>('/quotes', data),
   acceptQuote: (quoteId: string) =>
     api.post(`/quotes/${quoteId}/accept`),

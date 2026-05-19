@@ -48,8 +48,14 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+      - /app/.next
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+      CHOKIDAR_USEPOLLING: "true"
+    command: npm run dev
     depends_on:
       - backend
 

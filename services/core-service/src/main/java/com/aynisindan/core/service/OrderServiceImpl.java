@@ -64,6 +64,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<OrderResponse> getAllPendingOrders() {
+        return orderRepository.findByStatus(OrderStatus.PENDING)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();

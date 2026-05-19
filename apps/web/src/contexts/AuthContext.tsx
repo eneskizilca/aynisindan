@@ -6,6 +6,8 @@ import {
   useState,
   useEffect,
   useCallback,
+  useRef,
+  useMemo,
   ReactNode,
 } from 'react';
 import { authApi, AuthResponse, LoginPayload, RegisterPayload } from '@/services/api';
@@ -34,7 +36,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const initialized = useRef(false);
+
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
     const savedToken = localStorage.getItem('aynisindan_token');
     const savedUser = localStorage.getItem('aynisindan_user');
     if (savedToken && savedUser) {
@@ -74,10 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const contextValue = useMemo(
+    () => ({ user, token, isLoading, login, register, logout, isAuthenticated: !!token }),
+    [user, token, isLoading, login, register, logout]
+  );
+
   return (
-    <AuthContext.Provider
-      value={{ user, token, isLoading, login, register, logout, isAuthenticated: !!token }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

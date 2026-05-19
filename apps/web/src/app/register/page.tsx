@@ -37,7 +37,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       await register({ fullName, email, password, role });
-      router.push('/dashboard/orders');
+      router.push('/orders');
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Kayıt başarısız. Lütfen tekrar deneyin.');
     } finally {
@@ -46,8 +46,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#fff8f6] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl border border-[#e9d6d1] shadow-sm p-8">
+    <div className="min-h-screen bg-[#fff8f6] flex items-center justify-center p-4 sm:p-6">
+      <div className="w-full max-w-md bg-white rounded-2xl border border-[#e9d6d1] shadow-sm p-6 sm:p-8">
         {/* Logo */}
         <div className="flex justify-center mb-6">
           <Image src="/logo.svg" alt="Aynısından" width={100} height={100} className="object-contain" />

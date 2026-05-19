@@ -28,7 +28,6 @@ export default function NewOrderPage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
-  // Image Upload & Crop State
   const [uploadMode, setUploadMode] = useState<'url' | 'local'>('local');
   const [referenceImageUrl, setReferenceImageUrl] = useState('');
   const [imgSrc, setImgSrc] = useState('');
@@ -44,7 +43,7 @@ export default function NewOrderPage() {
 
   const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setCrop(undefined); // Makes crop preview update between images.
+      setCrop(undefined);
       const reader = new FileReader();
       reader.addEventListener('load', () => setImgSrc(reader.result?.toString() || ''));
       reader.readAsDataURL(e.target.files[0]);
@@ -87,7 +86,7 @@ export default function NewOrderPage() {
       const file = new File([blob], 'cropped-sketch.jpg', { type: 'image/jpeg' });
       setCroppedFile(file);
       setPreviewUrl(URL.createObjectURL(blob));
-      setImgSrc(''); // Hide cropper after confirming
+      setImgSrc('');
     }, 'image/jpeg');
   };
 
@@ -99,7 +98,6 @@ export default function NewOrderPage() {
     try {
       let finalImageUrl = uploadMode === 'url' ? referenceImageUrl : undefined;
 
-      // If local upload mode and user cropped an image
       if (uploadMode === 'local' && croppedFile) {
         const uploadRes = await ordersApi.uploadSketch(croppedFile);
         finalImageUrl = uploadRes.data.url;
@@ -110,7 +108,7 @@ export default function NewOrderPage() {
         description,
         referenceImageUrl: finalImageUrl || undefined,
       });
-      router.push('/dashboard/orders');
+      router.push('/orders');
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Sipariş oluşturulamadı.');
     } finally {
@@ -119,20 +117,18 @@ export default function NewOrderPage() {
   };
 
   return (
-    <div className="p-8 w-full max-w-2xl mx-auto">
-      {/* Geri */}
-      <Link href="/dashboard/orders" className="flex items-center gap-2 text-[#56423d] text-sm hover:text-[#de6b48] mb-6 transition-colors">
+    <div className="p-4 sm:p-8 w-full max-w-2xl mx-auto">
+      <Link href="/orders" className="flex items-center gap-2 text-[#56423d] text-sm hover:text-[#de6b48] mb-4 sm:mb-6 transition-colors">
         <ArrowLeftIcon className="w-4 h-4" />
         Siparişlere Dön
       </Link>
 
-      <h1 className="text-[#231916] font-bold text-3xl mb-1">Yeni Sipariş Oluştur</h1>
-      <p className="text-[#56423d] text-sm mb-8">
+      <h1 className="text-[#231916] font-bold text-2xl sm:text-3xl mb-1">Yeni Sipariş Oluştur</h1>
+      <p className="text-[#56423d] text-sm mb-6 sm:mb-8">
         Özel eserinizi tanımlayın, zanaatkârlar en iyi tekliflerini göndersin.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Başlık */}
         <div>
           <label className="block text-sm font-semibold text-[#231916] mb-1.5">
             Sipariş Başlığı <span className="text-red-500">*</span>
@@ -148,7 +144,6 @@ export default function NewOrderPage() {
           />
         </div>
 
-        {/* Açıklama */}
         <div>
           <label className="block text-sm font-semibold text-[#231916] mb-1.5">
             Detaylı Açıklama <span className="text-red-500">*</span>
@@ -164,9 +159,8 @@ export default function NewOrderPage() {
           />
         </div>
 
-        {/* Referans Görsel */}
         <div>
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
             <label className="block text-sm font-semibold text-[#231916]">
               Referans Görsel (İsteğe Bağlı)
             </label>
@@ -269,7 +263,7 @@ export default function NewOrderPage() {
         )}
 
         <div className="flex gap-3 pt-2">
-          <Link href="/dashboard/orders" className="btn-secondary flex-1 text-center">
+          <Link href="/orders" className="btn-secondary flex-1 text-center">
             İptal
           </Link>
           <button

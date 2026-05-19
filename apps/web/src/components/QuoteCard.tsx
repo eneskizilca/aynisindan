@@ -19,18 +19,18 @@ export default function QuoteCard({ quote, onAccept, isAccepting, isBestMatch }:
         </span>
       )}
 
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
         {/* Zanaatkâr bilgisi */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="w-11 h-11 rounded-full bg-[#feeae5] flex items-center justify-center text-[#de6b48] font-bold text-lg flex-shrink-0">
             {quote.artisanName?.charAt(0) ?? 'Z'}
           </div>
-          <div>
+          <div className="flex-1">
             <h4 className="font-semibold text-[#231916]">{quote.artisanName}</h4>
-            <div className="flex items-center gap-1 text-xs text-[#56423d] mt-0.5">
+            <div className="flex items-center gap-1 text-xs text-[#56423d] mt-0.5 flex-wrap">
               {quote.artisanRating != null && (
                 <>
-                  <StarIcon className="w-3.5 h-3.5 text-amber-400" />
+                  <StarIcon className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
                   <span className="font-medium">{quote.artisanRating.toFixed(1)}</span>
                   {quote.artisanReviewCount != null && (
                     <span>({quote.artisanReviewCount} Değerlendirme)</span>
@@ -43,8 +43,8 @@ export default function QuoteCard({ quote, onAccept, isAccepting, isBestMatch }:
         </div>
 
         {/* Fiyat + teslimat */}
-        <div className="text-right flex-shrink-0">
-          <p className="text-2xl font-bold text-[#231916]">
+        <div className="text-right sm:text-right flex-shrink-0 self-end sm:self-auto">
+          <p className="text-xl sm:text-2xl font-bold text-[#231916]">
             ₺{quote.offeredPrice.toLocaleString('tr-TR')}
           </p>
           <p className="text-xs text-[#56423d] flex items-center gap-1 justify-end mt-1">
