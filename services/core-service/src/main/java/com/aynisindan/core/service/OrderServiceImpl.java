@@ -9,6 +9,8 @@ import com.aynisindan.core.model.entity.Review;
 import com.aynisindan.core.model.entity.User;
 import com.aynisindan.core.model.enums.OrderStatus;
 import com.aynisindan.core.repository.OrderRepository;
+import com.aynisindan.core.model.enums.ReturnStatus;
+import com.aynisindan.core.repository.ReturnRepository;
 import com.aynisindan.core.repository.ReviewRepository;
 import com.aynisindan.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +28,12 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final ReturnRepository returnRepository;
     private final DummyEscrowService escrowService;
 
     private OrderResponse toResponse(Order order) {
+        boolean hasActiveReturn = returnRepository.existsByOrderIdAndStatusIn(order.getId(),
+                java.util.List.of(ReturnStatus.REQUESTED));
         return new OrderResponse(
                 order.getId(),
                 order.getTitle(),
@@ -39,8 +44,10 @@ public class OrderServiceImpl implements OrderService {
                 order.getCustomer().getId(),
                 order.getCustomer().getFullName(),
                 order.getArtisan() != null ? order.getArtisan().getFullName() : null,
+                order.getAgreedPrice(),
                 order.getCreatedAt(),
-                order.getUpdatedAt()
+                order.getUpdatedAt(),
+                hasActiveReturn
         );
     }
 
@@ -188,12 +195,14 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Puan 1 ile 5 arasinda olmalidir.");
         }
 
-        Review review = new Review(orderId, request.rating(), request.comment());
+        // 5. Degerlendirmeyi olustur ve kaydet
+        Review review = new Review(orderId, request.rating(), request.comment(), order.getArtisan().getId());
         Review saved = reviewRepository.save(review);
 
         return new ReviewResponse(
                 saved.getId(),
                 saved.getOrderId(),
+                saved.getArtisanId(),
                 saved.getRating(),
                 saved.getComment(),
                 saved.getCreatedAt()

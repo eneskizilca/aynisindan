@@ -22,7 +22,8 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await login({ email, password });
-      router.push('/orders');
+      const savedUser = JSON.parse(localStorage.getItem('aynisindan_user') || '{}');
+      router.push(savedUser.role === 'ARTISAN' ? '/feed' : '/orders');
     } catch (err: any) {
       setError(err?.response?.data?.message || 'E-posta veya şifre hatalı.');
     } finally {
