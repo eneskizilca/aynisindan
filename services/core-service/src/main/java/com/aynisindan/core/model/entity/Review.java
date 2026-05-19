@@ -36,6 +36,13 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String comment;
 
+    /**
+     * Değerlendirmenin yapıldığı siparişin zanaatkarı.
+     * İleride artisan bazlı ortalama puan sorguları için gerekli.
+     */
+    @Column(nullable = false)
+    private UUID artisanId;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -44,10 +51,11 @@ public class Review {
 
     public Review() {}
 
-    public Review(UUID orderId, Integer rating, String comment) {
+    public Review(UUID orderId, Integer rating, String comment, UUID artisanId) {
         this.orderId = orderId;
         this.rating = rating;
         this.comment = comment;
+        this.artisanId = artisanId;
     }
 
     // ─── Getters & Setters ─────────────────────────────────────────────────────
@@ -78,6 +86,14 @@ public class Review {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public UUID getArtisanId() {
+        return artisanId;
+    }
+
+    public void setArtisanId(UUID artisanId) {
+        this.artisanId = artisanId;
     }
 
     public LocalDateTime getCreatedAt() {

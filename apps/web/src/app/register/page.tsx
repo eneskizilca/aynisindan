@@ -37,7 +37,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       await register({ fullName, email, password, role });
-      router.push('/orders');
+      router.push(role === 'ARTISAN' ? '/feed' : '/orders');
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Kayıt başarısız. Lütfen tekrar deneyin.');
     } finally {

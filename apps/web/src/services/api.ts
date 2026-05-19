@@ -76,8 +76,10 @@ export interface Order {
   customerId: string;
   customerName?: string;
   artisanName?: string;
+  agreedPrice?: number;
   createdAt: string;
   updatedAt?: string;
+  hasActiveReturn?: boolean;
 }
 
 export interface CreateOrderPayload {
@@ -139,15 +141,78 @@ export const quotesApi = {
     api.post(`/quotes/${quoteId}/accept`),
 };
 
+// ─── Payments ────────────────────────────────────────────────────────────────
+export interface Payment {
+  id: string;
+  orderId: string;
+  amount: number;
+  status: 'HELD_IN_ESCROW' | 'RELEASED_TO_ARTISAN' | 'REFUNDED';
+  createdAt: string;
+}
+
+export const paymentsApi = {
+  getPaymentsByOrder: (orderId: string) =>
+    api.get<Payment[]>(`/payments/${orderId}`),
+  holdFunds: (orderId: string) =>
+    api.post<Payment>(`/payments/${orderId}/hold`),
+  getMyPayments: () => api.get<Payment[]>('/payments/my'),
+};
+
 // ─── Reviews ─────────────────────────────────────────────────────────────────
 export interface CreateReviewPayload {
   rating: number;
   comment: string;
 }
 
+export interface Review {
+  id: string;
+  orderId: string;
+  artisanId: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+}
+
 export const reviewsApi = {
   createReview: (orderId: string, data: CreateReviewPayload) =>
     api.post(`/orders/${orderId}/reviews`, data),
+  getReviewByOrder: (orderId: string) =>
+    api.get<Review>(`/reviews/order/${orderId}`),
+  getReviewsByArtisan: (artisanId: string) =>
+    api.get<Review[]>(`/reviews/artisan/${artisanId}`),
+  getArtisanStats: (artisanId: string) =>
+    api.get<{ averageRating: number; reviewCount: number }>(`/reviews/artisan/${artisanId}/stats`),
+};
+
+// ─── Returns ──────────────────────────────────────────────────────────────────
+export interface Return {
+  id: string;
+  orderId: string;
+  orderTitle: string;
+  artisanId: string;
+  artisanName: string;
+  customerId: string;
+  customerName: string;
+  reason: string;
+  status: 'REQUESTED' | 'APPROVED' | 'REJECTED' | 'REFUNDED';
+  amount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const returnsApi = {
+  createReturn: (orderId: string, reason: string) =>
+    api.post<Return>(`/returns?orderId=${orderId}`, { reason }),
+  approveReturn: (returnId: string) =>
+    api.post(`/returns/${returnId}/approve`),
+  rejectReturn: (returnId: string) =>
+    api.post(`/returns/${returnId}/reject`),
+  getMyReturns: () =>
+    api.get<Return[]>('/returns/my'),
+  getAllReturns: () =>
+    api.get<Return[]>('/returns/my/all'),
+  getReturnByOrder: (orderId: string) =>
+    api.get<Return>(`/returns/order/${orderId}`),
 };
 
 export default api;

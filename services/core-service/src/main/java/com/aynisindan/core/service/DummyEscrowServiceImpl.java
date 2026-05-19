@@ -40,4 +40,18 @@ public class DummyEscrowServiceImpl implements DummyEscrowService {
         log.info("Dummy Payment: {} TL zanaatkara aktarıldı. [orderId={}]",
                 payment.getAmount(), orderId);
     }
+
+    @Override
+    @Transactional
+    public void refundFunds(UUID orderId) {
+        Payment payment = paymentRepository.findByOrderIdAndStatus(orderId, PaymentStatus.HELD_IN_ESCROW)
+                .orElseThrow(() -> new RuntimeException(
+                        "Havuzda ödeme bulunamadı. orderId: " + orderId));
+
+        payment.setStatus(PaymentStatus.REFUNDED);
+        paymentRepository.save(payment);
+
+        log.info("Dummy Payment: {} TL müşteriye iade edildi. [orderId={}]",
+                payment.getAmount(), orderId);
+    }
 }
