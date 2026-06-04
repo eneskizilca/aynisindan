@@ -9,7 +9,6 @@ const api = axios.create({
   },
 });
 
-// Request interceptor — attach JWT token to every request
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
@@ -23,7 +22,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor — handle 401 globally
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -38,7 +36,6 @@ api.interceptors.response.use(
   }
 );
 
-// ─── Auth ────────────────────────────────────────────────────────────────────
 export interface RegisterPayload {
   fullName: string;
   email: string;
@@ -66,12 +63,12 @@ export const authApi = {
     api.post<AuthResponse>('/auth/login', data),
 };
 
-// ─── Orders ──────────────────────────────────────────────────────────────────
 export interface Order {
   id: string;
   title: string;
   description: string;
   referenceImageUrl?: string;
+  aiGeneratedImageUrl?: string;
   status: 'PENDING' | 'IN_PROGRESS' | 'DELIVERED' | 'COMPLETED' | 'CANCELLED';
   customerId: string;
   customerName?: string;
@@ -84,6 +81,12 @@ export interface CreateOrderPayload {
   title: string;
   description: string;
   referenceImageUrl?: string;
+  aiGeneratedImageUrl?: string;
+}
+
+export interface SketchEnhanceResponse {
+  sketchUrl: string;
+  aiGeneratedUrl: string;
 }
 
 export const ordersApi = {
@@ -99,14 +102,27 @@ export const ordersApi = {
     const formData = new FormData();
     formData.append('file', file);
     return api.post<{ url: string }>('/orders/upload-sketch', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  enhanceSketch: (
+    sketch: File,
+    category: string,
+    dimensions: string,
+    material: string
+  ) => {
+    const formData = new FormData();
+    formData.append('sketch', sketch);
+    formData.append('category', category);
+    formData.append('dimensions', dimensions);
+    formData.append('material', material);
+    return api.post<SketchEnhanceResponse>('/orders/enhance-sketch', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 60000,
     });
   },
 };
 
-// ─── Quotes ──────────────────────────────────────────────────────────────────
 export interface Quote {
   id: string;
   orderId: string;
@@ -139,7 +155,6 @@ export const quotesApi = {
     api.post(`/quotes/${quoteId}/accept`),
 };
 
-// ─── Reviews ─────────────────────────────────────────────────────────────────
 export interface CreateReviewPayload {
   rating: number;
   comment: string;

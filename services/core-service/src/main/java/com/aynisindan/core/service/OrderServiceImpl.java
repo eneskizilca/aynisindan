@@ -28,14 +28,13 @@ public class OrderServiceImpl implements OrderService {
     private final ReviewRepository reviewRepository;
     private final DummyEscrowService escrowService;
 
-    // ─── Helpers ──────────────────────────────────────────────────────────────
-
     private OrderResponse toResponse(Order order) {
         return new OrderResponse(
                 order.getId(),
                 order.getTitle(),
                 order.getDescription(),
                 order.getReferenceImageUrl(),
+                order.getAiGeneratedImageUrl(),
                 order.getStatus().name(),
                 order.getCustomer().getId(),
                 order.getCustomer().getFullName(),
@@ -45,14 +44,12 @@ public class OrderServiceImpl implements OrderService {
         );
     }
 
-    // ─── Service Methods ───────────────────────────────────────────────────────
-
     @Override
     @Transactional(readOnly = true)
     public List<OrderResponse> getMyOrders() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+                .orElseThrow(() -> new RuntimeException("Kullanici bulunamadi. Email: " + email));
 
         List<Order> orders;
         if ("ARTISAN".equals(currentUser.getRole().name())) {
@@ -77,13 +74,14 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponse createOrder(CreateOrderRequest request) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User customer = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+                .orElseThrow(() -> new RuntimeException("Kullanici bulunamadi. Email: " + email));
 
         Order order = new Order();
         order.setCustomer(customer);
         order.setTitle(request.title());
         order.setDescription(request.description());
         order.setReferenceImageUrl(request.referenceImageUrl());
+        order.setAiGeneratedImageUrl(request.aiGeneratedImageUrl());
         order.setStatus(OrderStatus.PENDING);
 
         return toResponse(orderRepository.save(order));
@@ -102,36 +100,32 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public OrderResponse getOrderById(UUID orderId) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Sipariş bulunamadı. ID: " + orderId));
+                .orElseThrow(() -> new RuntimeException("Siparis bulunamadi. ID: " + orderId));
         return toResponse(order);
     }
 
     @Override
     @Transactional
     public OrderResponse completeOrder(UUID orderId) {
-        // 1. Siparişi bul
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException(
-                        "Sipariş bulunamadı. ID: " + orderId));
+                        "Siparis bulunamadi. ID: " + orderId));
 
-        // 2. Sipariş IN_PROGRESS durumunda mı?
         if (order.getStatus() != OrderStatus.IN_PROGRESS) {
             throw new RuntimeException(
-                    "Sipariş teslim edilemez; mevcut durum: " + order.getStatus());
+                    "Siparis teslim edilemez; mevcut durum: " + order.getStatus());
         }
 
-        // 3. İsteği yapan zanaatkar, siparişe atanmış zanaatkarla eşleşiyor mu?
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+                .orElseThrow(() -> new RuntimeException("Kullanici bulunamadi. Email: " + email));
 
         UUID assignedArtisanId = order.getArtisan().getId();
         if (!assignedArtisanId.equals(currentUser.getId())) {
             throw new RuntimeException(
-                    "Yetkisiz işlem: bu siparişi yalnızca atanmış zanaatkar teslim edebilir.");
+                    "Yetkisiz islem: bu siparisi yalnizca atanmis zanaatkar teslim edebilir.");
         }
 
-        // 4. Durumu DELIVERED yap (müşteri onayı bekleniyor)
         order.setStatus(OrderStatus.DELIVERED);
         return toResponse(orderRepository.save(order));
     }
@@ -139,31 +133,26 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderResponse approveDelivery(UUID orderId) {
-        // 1. Siparişi bul
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException(
-                        "Sipariş bulunamadı. ID: " + orderId));
+                        "Siparis bulunamadi. ID: " + orderId));
 
-        // 2. Sipariş DELIVERED durumunda mı?
         if (order.getStatus() != OrderStatus.DELIVERED) {
             throw new RuntimeException(
                     "Onaylanacak bir teslimat yok; mevcut durum: " + order.getStatus());
         }
 
-        // 2.5. İsteği yapan müşteri, siparişi oluşturan müşteri mi?
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+                .orElseThrow(() -> new RuntimeException("Kullanici bulunamadi. Email: " + email));
 
         if (!order.getCustomer().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Yetkisiz işlem: Sadece sipariş sahibi teslimatı onaylayabilir.");
+            throw new RuntimeException("Yetkisiz islem: Sadece siparis sahibi teslimati onaylayabilir.");
         }
 
-        // 3. Durumu COMPLETED yap
         order.setStatus(OrderStatus.COMPLETED);
         orderRepository.save(order);
 
-        // 4. Havuzdaki ödemeyi zanaatkara serbest bırak
         escrowService.releaseFunds(orderId);
 
         return toResponse(order);
@@ -172,39 +161,33 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public ReviewResponse addReview(UUID orderId, CreateReviewRequest request) {
-        // 1. Siparişi bul
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException(
-                        "Sipariş bulunamadı. ID: " + orderId));
+                        "Siparis bulunamadi. ID: " + orderId));
 
-        // 2. Sipariş COMPLETED durumunda mı?
         if (order.getStatus() != OrderStatus.COMPLETED) {
             throw new RuntimeException(
-                    "Yalnızca tamamlanmış siparişler değerlendirilebilir; mevcut durum: "
+                    "Yalnizca tamamlanmis siparisler degerlendirilebilir; mevcut durum: "
                             + order.getStatus());
         }
 
-        // 2.5. İsteği yapan müşteri, siparişi oluşturan müşteri mi?
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Kullanıcı bulunamadı. Email: " + email));
+                .orElseThrow(() -> new RuntimeException("Kullanici bulunamadi. Email: " + email));
 
         if (!order.getCustomer().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Yetkisiz işlem: Sadece sipariş sahibi değerlendirme yapabilir.");
+            throw new RuntimeException("Yetkisiz islem: Sadece siparis sahibi degerlendirme yapabilir.");
         }
 
-        // 3. Bu sipariş için daha önce değerlendirme yapılmış mı?
         if (reviewRepository.existsByOrderId(orderId)) {
             throw new RuntimeException(
-                    "Bu sipariş için zaten bir değerlendirme mevcut.");
+                    "Bu siparis icin zaten bir degerlendirme mevcut.");
         }
 
-        // 4. Puan aralığı geçerli mi? (1-5)
         if (request.rating() < 1 || request.rating() > 5) {
-            throw new RuntimeException("Puan 1 ile 5 arasında olmalıdır.");
+            throw new RuntimeException("Puan 1 ile 5 arasinda olmalidir.");
         }
 
-        // 5. Değerlendirmeyi oluştur ve kaydet
         Review review = new Review(orderId, request.rating(), request.comment());
         Review saved = reviewRepository.save(review);
 

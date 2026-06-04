@@ -38,6 +38,9 @@ public class Order {
     @Column
     private String referenceImageUrl;
 
+    @Column
+    private String aiGeneratedImageUrl;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus status = OrderStatus.PENDING;
@@ -53,8 +56,6 @@ public class Order {
     @Column
     private LocalDateTime updatedAt;
 
-    // ─── Constructors ──────────────────────────────────────────────────────────
-
     public Order() {}
 
     public Order(User customer, String title, String description, String referenceImageUrl) {
@@ -64,8 +65,6 @@ public class Order {
         this.referenceImageUrl = referenceImageUrl;
         this.status = OrderStatus.PENDING;
     }
-
-    // ─── Getters & Setters ─────────────────────────────────────────────────────
 
     public UUID getId() {
         return id;
@@ -109,6 +108,14 @@ public class Order {
 
     public void setReferenceImageUrl(String referenceImageUrl) {
         this.referenceImageUrl = referenceImageUrl;
+    }
+
+    public String getAiGeneratedImageUrl() {
+        return aiGeneratedImageUrl;
+    }
+
+    public void setAiGeneratedImageUrl(String aiGeneratedImageUrl) {
+        this.aiGeneratedImageUrl = aiGeneratedImageUrl;
     }
 
     public OrderStatus getStatus() {
