@@ -47,6 +47,8 @@ services:
       AWS_REGION: ${AWS_REGION}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       GOOGLE_AI_MODEL_NAME: ${GOOGLE_AI_MODEL_NAME}
+      AI_PROVIDER: ${AI_PROVIDER}
+      FAL_API_KEY: ${FAL_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
