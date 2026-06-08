@@ -231,4 +231,79 @@ export const returnsApi = {
     api.get<Return>(`/returns/order/${orderId}`),
 };
 
+// ─── Go Catalog & Portfolio Service ───────────────────────────────────────────
+const CATALOG_URL = process.env.NEXT_PUBLIC_CATALOG_API_URL || 'http://localhost:8081/api/v1';
+
+const catalogHttp = axios.create({
+  baseURL: CATALOG_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+catalogHttp.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('aynisindan_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export interface Portfolio {
+  id: string;
+  artisan_id: string;
+  full_name: string;
+  bio: string;
+  profession: string;
+  skills: string[];
+  rating_sum: number;
+  rating_count: number;
+  items: PortfolioItem[];
+}
+
+export interface PortfolioItem {
+  id: string;
+  order_id?: string;
+  title: string;
+  description: string;
+  image_url: string;
+  price: number;
+  completed_at: string;
+  rating: number;
+  comment: string;
+  is_manual: boolean;
+}
+
+export interface CatalogFeedItem {
+  id: string;
+  order_id?: string;
+  artisan_id: string;
+  artisan_name: string;
+  title: string;
+  description: string;
+  image_url: string;
+  price: number;
+  completed_at: string;
+  rating: number;
+  comment: string;
+  is_manual: boolean;
+}
+
+export const portfolioApi = {
+  getPortfolio: (artisanId: string) =>
+    catalogHttp.get<Portfolio>(`/portfolios/${artisanId}`),
+  updatePortfolio: (data: { full_name: string; bio: string; profession: string; skills: string[] }) =>
+    catalogHttp.post('/portfolios', data),
+  createItem: (data: { title: string; description: string; image_url: string; price: number }) =>
+    catalogHttp.post<PortfolioItem>('/portfolios/items', data),
+};
+
+export const catalogApi = {
+  getFeed: () =>
+    catalogHttp.get<CatalogFeedItem[]>('/catalog'),
+};
+
 export default api;

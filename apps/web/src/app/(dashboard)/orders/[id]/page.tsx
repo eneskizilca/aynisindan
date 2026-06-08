@@ -108,6 +108,7 @@ export default function OrderDetailPage() {
     try {
       await quotesApi.acceptQuote(quoteId);
       await fetchData();
+      setShowPaymentModal(true);
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Teklif kabul edilemedi.');
     } finally {
