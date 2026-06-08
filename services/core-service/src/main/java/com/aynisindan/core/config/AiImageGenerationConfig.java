@@ -41,7 +41,7 @@ public class AiImageGenerationConfig {
         requestFactory.setReadTimeout(60000);
 
         return RestClient.builder()
-                .baseUrl("https://rest.fal.run")
+                .baseUrl("https://fal.run")
                 .requestFactory(requestFactory)
                 .defaultHeader("Content-Type", "application/json")
                 .build();
