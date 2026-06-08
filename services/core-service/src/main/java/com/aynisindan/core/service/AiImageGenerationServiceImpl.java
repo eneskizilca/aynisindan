@@ -41,7 +41,7 @@ public class AiImageGenerationServiceImpl implements AiImageGenerationService {
         
         if ("mock".equalsIgnoreCase(provider)) {
             log.info("Mock provider active. Returning static dummy image.");
-            return "http://localhost:8080/chair_finished_product.png";
+            return "/chair_finished_product.png";
         }
         
         if ("fal-ai".equalsIgnoreCase(provider)) {
@@ -106,7 +106,7 @@ public class AiImageGenerationServiceImpl implements AiImageGenerationService {
 
         } catch (Exception e) {
             log.warn("Google AI Image Generation failed, falling back to local static dummy image: {}", e.getMessage());
-            return "http://localhost:8080/chair_finished_product.png";
+            return "/chair_finished_product.png";
         }
     }
 
