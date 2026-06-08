@@ -9,6 +9,8 @@ import com.aynisindan.core.model.entity.Review;
 import com.aynisindan.core.model.entity.User;
 import com.aynisindan.core.model.enums.OrderStatus;
 import com.aynisindan.core.repository.OrderRepository;
+import com.aynisindan.core.model.enums.ReturnStatus;
+import com.aynisindan.core.repository.ReturnRepository;
 import com.aynisindan.core.repository.ReviewRepository;
 import com.aynisindan.core.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +28,12 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
+    private final ReturnRepository returnRepository;
     private final DummyEscrowService escrowService;
 
     private OrderResponse toResponse(Order order) {
+        boolean hasActiveReturn = returnRepository.existsByOrderIdAndStatusIn(order.getId(),
+                java.util.List.of(ReturnStatus.REQUESTED));
         return new OrderResponse(
                 order.getId(),
                 order.getTitle(),
@@ -39,8 +44,10 @@ public class OrderServiceImpl implements OrderService {
                 order.getCustomer().getId(),
                 order.getCustomer().getFullName(),
                 order.getArtisan() != null ? order.getArtisan().getFullName() : null,
+                order.getAgreedPrice(),
                 order.getCreatedAt(),
-                order.getUpdatedAt()
+                order.getUpdatedAt(),
+                hasActiveReturn
         );
     }
 
@@ -155,6 +162,25 @@ public class OrderServiceImpl implements OrderService {
 
         escrowService.releaseFunds(orderId);
 
+        // Notify Go Catalog service
+        try {
+            String imageUrl = order.getAiGeneratedImageUrl() != null ? order.getAiGeneratedImageUrl() : order.getReferenceImageUrl();
+            String payload = String.format(
+                "{\"orderId\":\"%s\",\"artisanId\":\"%s\",\"artisanName\":\"%s\",\"title\":\"%s\",\"description\":\"%s\",\"imageUrl\":\"%s\",\"price\":%.2f,\"completedAt\":\"%s\"}",
+                order.getId(),
+                order.getArtisan().getId(),
+                escapeJson(order.getArtisan().getFullName()),
+                escapeJson(order.getTitle()),
+                escapeJson(order.getDescription()),
+                imageUrl != null ? escapeJson(imageUrl) : "",
+                order.getAgreedPrice() != null ? order.getAgreedPrice().doubleValue() : 0.0,
+                java.time.Instant.now().toString()
+            );
+            sendInternalNotification("/api/v1/internal/orders/complete", payload);
+        } catch (Exception e) {
+            System.err.println("Failed to send complete order notification: " + e.getMessage());
+        }
+
         return toResponse(order);
     }
 
@@ -188,15 +214,64 @@ public class OrderServiceImpl implements OrderService {
             throw new RuntimeException("Puan 1 ile 5 arasinda olmalidir.");
         }
 
-        Review review = new Review(orderId, request.rating(), request.comment());
+        // 5. Degerlendirmeyi olustur ve kaydet
+        Review review = new Review(orderId, request.rating(), request.comment(), order.getArtisan().getId());
         Review saved = reviewRepository.save(review);
+
+        // Notify Go Catalog service
+        try {
+            String payload = String.format(
+                "{\"orderId\":\"%s\",\"rating\":%d,\"comment\":\"%s\"}",
+                saved.getOrderId(),
+                saved.getRating(),
+                escapeJson(saved.getComment())
+            );
+            sendInternalNotification("/api/v1/internal/orders/review", payload);
+        } catch (Exception e) {
+            System.err.println("Failed to send review notification: " + e.getMessage());
+        }
 
         return new ReviewResponse(
                 saved.getId(),
                 saved.getOrderId(),
+                saved.getArtisanId(),
                 saved.getRating(),
                 saved.getComment(),
                 saved.getCreatedAt()
         );
+    }
+
+    private String escapeJson(String value) {
+        if (value == null) return "";
+        return value.replace("\\", "\\\\")
+                    .replace("\"", "\\\"")
+                    .replace("\n", "\\n")
+                    .replace("\r", "\\r")
+                    .replace("\t", "\\t");
+    }
+
+    private void sendInternalNotification(String path, String jsonPayload) {
+        try {
+            java.net.http.HttpClient client = java.net.http.HttpClient.newHttpClient();
+            java.net.http.HttpRequest request = java.net.http.HttpRequest.newBuilder()
+                    .uri(java.net.URI.create("http://chat-catalog-service:8081" + path))
+                    .header("Content-Type", "application/json")
+                    .POST(java.net.http.HttpRequest.BodyPublishers.ofString(jsonPayload))
+                    .build();
+            client.sendAsync(request, java.net.http.HttpResponse.BodyHandlers.ofString())
+                    .thenAccept(response -> {
+                        if (response.statusCode() >= 300) {
+                            System.err.println("Go catalog notification failed: Status code " + response.statusCode());
+                        } else {
+                            System.out.println("Go catalog notification sent successfully to " + path);
+                        }
+                    })
+                    .exceptionally(ex -> {
+                        System.err.println("Go catalog notification exception: " + ex.getMessage());
+                        return null;
+                    });
+        } catch (Exception e) {
+            System.err.println("Failed to send internal notification: " + e.getMessage());
+        }
     }
 }

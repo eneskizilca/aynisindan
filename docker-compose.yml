@@ -18,6 +18,16 @@ services:
       timeout: 5s
       retries: 5
 
+  # ───────── MongoDB (Golang Servisleri İçin) ─────────
+  mongo:
+    image: mongo:6.0
+    container_name: aynisindan-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
   # ───────── Spring Boot Backend ─────────
   backend:
     build:
@@ -35,8 +45,10 @@ services:
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       AWS_S3_BUCKET: ${AWS_S3_BUCKET}
       AWS_REGION: ${AWS_REGION}
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY_ENV}
       GOOGLE_AI_MODEL_NAME: ${GOOGLE_AI_MODEL_NAME}
+      AI_PROVIDER: ${AI_PROVIDER}
+      FAL_API_KEY: ${FAL_API_KEY}
     depends_on:
       postgres:
         condition: service_healthy
@@ -56,10 +68,28 @@ services:
       - /app/.next
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+      NEXT_PUBLIC_CATALOG_API_URL: http://localhost:8081/api/v1
       CHOKIDAR_USEPOLLING: "true"
     command: npm run dev
     depends_on:
       - backend
 
+  # ───────── Go Chat & Catalog Service ─────────
+  chat-catalog-service:
+    build:
+      context: ./services/chat-catalog-service
+      dockerfile: Dockerfile
+    container_name: aynisindan-chat-catalog
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      MONGO_URI: mongodb://mongo:27017/aynisindan
+      PORT: 8081
+      JWT_SECRET: aynisindanplatformusecretkeyformjwttokengenerationmustbelongenough
+    depends_on:
+      - mongo
+
 volumes:
   postgres_data:
+  mongo_data:

@@ -25,13 +25,13 @@ function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: numbe
 }
 
 const CATEGORIES = [
-  { value: '', label: 'Kategori secin...' },
-  { value: 'Marangozluk', label: 'Marangozluk (Ahsap)' },
-  { value: 'Metal Isciligi', label: 'Metal Isciligi' },
+  { value: '', label: 'Kategori seçin...' },
+  { value: 'Marangozluk', label: 'Marangozluk (Ahşap)' },
+  { value: 'Metal Isciligi', label: 'Metal İşçiliği' },
   { value: 'Seramik', label: 'Seramik / Cam' },
   { value: 'Tekstil', label: 'Tekstil / Dericilik' },
-  { value: 'Takı', label: 'Taki / Muzerret' },
-  { value: 'Diger', label: 'Diger' },
+  { value: 'Takı', label: 'Takı' },
+  { value: 'Diger', label: 'Diğer' },
 ];
 
 export default function NewOrderPage() {
@@ -126,7 +126,7 @@ export default function NewOrderPage() {
       setAiGeneratedImageUrl(res.data.aiGeneratedUrl);
       setEnhancementStep('review');
     } catch (err: any) {
-      const msg = err?.response?.data?.message || 'Eskiz iyilestirilemedi.';
+      const msg = err?.response?.data?.message || 'Eskiz iyileştirilemedi.';
       setError(msg);
       setEnhancementStep('idle');
     } finally {
@@ -169,7 +169,7 @@ export default function NewOrderPage() {
       });
       router.push('/orders');
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Siparis olusturulamadi.');
+      setError(err?.response?.data?.message || 'Sipariş oluşturulamadı.');
     } finally {
       setIsLoading(false);
     }
@@ -181,25 +181,25 @@ export default function NewOrderPage() {
     <div className="p-4 sm:p-8 w-full max-w-2xl mx-auto">
       <Link href="/orders" className="flex items-center gap-2 text-[#56423d] text-sm hover:text-[#de6b48] mb-4 sm:mb-6 transition-colors">
         <ArrowLeftIcon className="w-4 h-4" />
-        Siparislere Don
+        Siparişlere Dön
       </Link>
 
-      <h1 className="text-[#231916] font-bold text-2xl sm:text-3xl mb-1">Yeni Siparis Olustur</h1>
+      <h1 className="text-[#231916] font-bold text-2xl sm:text-3xl mb-1">Yeni Sipariş Oluştur</h1>
       <p className="text-[#56423d] text-sm mb-6 sm:mb-8">
-        Ozel eserinizi tanimlayin, zanaatkarlar en iyi tekliflerini gonderin.
+        Özel eserinizi tanımlayın, zanaatkârlar en iyi tekliflerini göndersin.
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label className="block text-sm font-semibold text-[#231916] mb-1.5">
-            Siparis Basligi <span className="text-red-500">*</span>
+            Sipariş Başlığı <span className="text-red-500">*</span>
           </label>
           <input
             id="order-title"
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="orn. Ozel Ceviz Yemek Masasi"
+            placeholder="örn. Özel Ceviz Yemek Masası"
             required
             className="input-field"
           />
@@ -207,13 +207,13 @@ export default function NewOrderPage() {
 
         <div>
           <label className="block text-sm font-semibold text-[#231916] mb-1.5">
-            Detayli Aciklama <span className="text-red-500">*</span>
+            Detaylı Açıklama <span className="text-red-500">*</span>
           </label>
           <textarea
             id="order-description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Olculer, malzemeler, yuzey islemi ve ozel isteklerinizi aciklayin..."
+            placeholder="Ölçüler, malzemeler, yüzey işlemi ve özel isteklerinizi açıklayın..."
             required
             rows={5}
             className="input-field resize-none"
@@ -237,13 +237,13 @@ export default function NewOrderPage() {
           </div>
           <div>
             <label className="block text-sm font-semibold text-[#231916] mb-1.5">
-              Olculer
+              Ölçüler
             </label>
             <input
               type="text"
               value={dimensions}
               onChange={(e) => setDimensions(e.target.value)}
-              placeholder="orn. 120x80x75 cm"
+              placeholder="örn. 120x80x75 cm"
               className="input-field"
             />
           </div>
@@ -255,7 +255,7 @@ export default function NewOrderPage() {
               type="text"
               value={material}
               onChange={(e) => setMaterial(e.target.value)}
-              placeholder="orn. Ceviz agaci"
+              placeholder="örn. Ceviz ağacı"
               className="input-field"
             />
           </div>
@@ -264,7 +264,7 @@ export default function NewOrderPage() {
         <div>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-2">
             <label className="block text-sm font-semibold text-[#231916]">
-              Referans Gorsel (Istege Bagli)
+              Referans Görsel (İsteğe Bağlı)
             </label>
             <div className="flex bg-[#f2ded9] rounded-lg p-1">
               <button
@@ -273,7 +273,7 @@ export default function NewOrderPage() {
                 className={`flex items-center gap-1 px-3 py-1 text-xs rounded-md transition-colors cursor-pointer ${uploadMode === 'local' ? 'bg-white shadow text-[#231916] font-semibold' : 'text-[#8a726b] hover:text-[#231916]'
                   }`}
               >
-                <CloudArrowUpIcon className="w-4 h-4" /> Yukle
+                <CloudArrowUpIcon className="w-4 h-4" /> Yükle
               </button>
               <button
                 type="button"
@@ -303,9 +303,9 @@ export default function NewOrderPage() {
               {!imgSrc && !previewUrl && enhancementStep === 'idle' && (
                 <>
                   <CloudArrowUpIcon className="w-10 h-10 text-[#de6b48] mx-auto mb-2" />
-                  <p className="text-sm text-[#56423d] mb-4">Bir gorsel secin ve kare olarak kirpin</p>
+                  <p className="text-sm text-[#56423d] mb-4">Bir görsel seçin ve kare olarak kırpın</p>
                   <label className="btn-secondary cursor-pointer inline-block">
-                    Bilgisayardan Sec
+                    Bilgisayardan Seç
                     <input
                       type="file"
                       accept="image/*"
@@ -318,7 +318,7 @@ export default function NewOrderPage() {
 
               {imgSrc && (
                 <div className="flex flex-col items-center">
-                  <p className="text-sm font-semibold text-[#231916] mb-3">Istediginiz alani kirpin:</p>
+                  <p className="text-sm font-semibold text-[#231916] mb-3">İstediğiniz alanı kırpın:</p>
                   <ReactCrop
                     crop={crop}
                     onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -329,17 +329,17 @@ export default function NewOrderPage() {
                     <img
                       ref={imgRef}
                       src={imgSrc}
-                      alt="Crop preview"
+                      alt="Kırpma Önizleme"
                       onLoad={onImageLoad}
                       className="max-h-64 object-contain"
                     />
                   </ReactCrop>
                   <div className="flex gap-3 mt-4">
                     <button type="button" onClick={() => setImgSrc('')} className="btn-secondary">
-                      Iptal
+                      İptal
                     </button>
                     <button type="button" onClick={generateCroppedImage} className="btn-primary">
-                      Kirpmayi Onayla
+                      Kırpmayı Onayla
                     </button>
                   </div>
                 </div>
@@ -347,10 +347,10 @@ export default function NewOrderPage() {
 
               {previewUrl && !imgSrc && enhancementStep === 'idle' && (
                 <div className="flex flex-col items-center">
-                  <img src={previewUrl} alt="Cropped result" className="w-48 h-48 object-cover rounded-xl shadow-sm mb-4" />
+                  <img src={previewUrl} alt="Kırpılmış görsel" className="w-48 h-48 object-cover rounded-xl shadow-sm mb-4" />
                   <div className="flex gap-3">
                     <button type="button" onClick={() => { setPreviewUrl(''); setCroppedFile(null); }} className="btn-secondary text-xs">
-                      Gorseli Degistir
+                      Görseli Değiştir
                     </button>
                     <button
                       type="button"
@@ -358,7 +358,7 @@ export default function NewOrderPage() {
                       className="btn-primary text-xs flex items-center gap-1.5"
                     >
                       <SparklesIcon className="w-4 h-4" />
-                      Eskizi Iyilestir (AI)
+                      Eskizi İyileştir (AI)
                     </button>
                   </div>
                 </div>
@@ -371,8 +371,8 @@ export default function NewOrderPage() {
                     <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-[#de6b48] animate-spin"></div>
                     <SparklesIcon className="absolute inset-0 m-auto w-8 h-8 text-[#de6b48] animate-pulse" />
                   </div>
-                  <p className="text-sm font-semibold text-[#231916] mb-1">Eskiziniz isleniyor...</p>
-                  <p className="text-xs text-[#8a726b]">Zanaatkarlarimiz icin referans gorsel hazirlaniyor</p>
+                  <p className="text-sm font-semibold text-[#231916] mb-1">Eskiziniz işleniyor...</p>
+                  <p className="text-xs text-[#8a726b]">Zanaatkârlarımız için referans görsel hazırlanıyor</p>
                   <div className="mt-4 w-48 h-2 bg-[#f2ded9] rounded-full overflow-hidden">
                     <div className="h-full bg-[#de6b48] rounded-full animate-pulse" style={{ width: '60%' }}></div>
                   </div>
@@ -381,7 +381,7 @@ export default function NewOrderPage() {
 
               {enhancementStep === 'review' && aiGeneratedImageUrl && (
                 <div className="flex flex-col items-center">
-                  <p className="text-sm font-semibold text-[#231916] mb-3">Talebiniz buna benziyor mu?</p>
+                  <p className="text-sm font-semibold text-[#231916] mb-3">Tasarımınız buna benziyor mu?</p>
                   <div className="flex flex-col sm:flex-row gap-4 mb-4">
                     <div className="text-center">
                       <p className="text-xs text-[#8a726b] mb-2">Orijinal Eskiz</p>
@@ -391,17 +391,17 @@ export default function NewOrderPage() {
                       <SparklesIcon className="w-6 h-6 text-[#de6b48]" />
                     </div>
                     <div className="text-center">
-                      <p className="text-xs text-[#8a726b] mb-2">AI Referans Gorsel</p>
+                      <p className="text-xs text-[#8a726b] mb-2">AI Referans Görsel</p>
                       <img src={aiGeneratedImageUrl} alt="AI generated reference" className="w-40 h-40 object-cover rounded-xl shadow-sm border-2 border-[#de6b48]" />
                     </div>
                   </div>
                   <div className="flex gap-3">
                     <button type="button" onClick={handleRejectAiImage} className="btn-secondary text-xs flex items-center gap-1">
                       <XMarkIcon className="w-4 h-4" />
-                      Vazgec
+                      Vazgeç
                     </button>
                     <button type="button" onClick={handleAcceptAiImage} className="btn-primary text-xs">
-                      Bena benziyor, kullan
+                      Bana benziyor, kullan
                     </button>
                   </div>
                 </div>
@@ -416,16 +416,16 @@ export default function NewOrderPage() {
                       AI
                     </div>
                   </div>
-                  <p className="text-xs text-[#56423d] mb-2">AI referans gorseli siparise eklenecek</p>
+                  <p className="text-xs text-[#56423d] mb-2">AI referans görseli siparişe eklenecek</p>
                   <button type="button" onClick={() => { setAiGeneratedImageUrl(''); setAiSketchUrl(''); setEnhancementStep('idle'); }} className="btn-secondary text-xs">
-                    Gorseli Degistir
+                    Görseli Değiştir
                   </button>
                 </div>
               )}
             </div>
           )}
           <p className="text-[#8a726b] text-xs mt-2">
-            Zanaatkarlarin vizyonunuzu anlamasina yardimci olacak bir referans gorseli ekleyin.
+            Zanaatkârların vizyonunuzu anlamasına yardımcı olacak bir referans görseli ekleyin.
           </p>
         </div>
 
@@ -435,7 +435,7 @@ export default function NewOrderPage() {
 
         <div className="flex gap-3 pt-2">
           <Link href="/orders" className="btn-secondary flex-1 text-center">
-            Iptal
+            İptal
           </Link>
           <button
             id="submit-new-order"
@@ -443,7 +443,7 @@ export default function NewOrderPage() {
             disabled={isSubmitDisabled}
             className="btn-primary flex-1"
           >
-            {isLoading ? 'Gonderiliyor...' : 'Siparis Talebini Gonder'}
+            {isLoading ? 'Gönderiliyor...' : 'Sipariş Talebini Gönder'}
           </button>
         </div>
       </form>

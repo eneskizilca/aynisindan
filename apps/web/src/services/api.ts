@@ -73,8 +73,10 @@ export interface Order {
   customerId: string;
   customerName?: string;
   artisanName?: string;
+  agreedPrice?: number;
   createdAt: string;
   updatedAt?: string;
+  hasActiveReturn?: boolean;
 }
 
 export interface CreateOrderPayload {
@@ -155,14 +157,153 @@ export const quotesApi = {
     api.post(`/quotes/${quoteId}/accept`),
 };
 
+// ─── Payments ────────────────────────────────────────────────────────────────
+export interface Payment {
+  id: string;
+  orderId: string;
+  amount: number;
+  status: 'HELD_IN_ESCROW' | 'RELEASED_TO_ARTISAN' | 'REFUNDED';
+  createdAt: string;
+}
+
+export const paymentsApi = {
+  getPaymentsByOrder: (orderId: string) =>
+    api.get<Payment[]>(`/payments/${orderId}`),
+  holdFunds: (orderId: string) =>
+    api.post<Payment>(`/payments/${orderId}/hold`),
+  getMyPayments: () => api.get<Payment[]>('/payments/my'),
+};
+
+// ─── Reviews ─────────────────────────────────────────────────────────────────
 export interface CreateReviewPayload {
   rating: number;
   comment: string;
 }
 
+export interface Review {
+  id: string;
+  orderId: string;
+  artisanId: string;
+  rating: number;
+  comment?: string;
+  createdAt: string;
+}
+
 export const reviewsApi = {
   createReview: (orderId: string, data: CreateReviewPayload) =>
     api.post(`/orders/${orderId}/reviews`, data),
+  getReviewByOrder: (orderId: string) =>
+    api.get<Review>(`/reviews/order/${orderId}`),
+  getReviewsByArtisan: (artisanId: string) =>
+    api.get<Review[]>(`/reviews/artisan/${artisanId}`),
+  getArtisanStats: (artisanId: string) =>
+    api.get<{ averageRating: number; reviewCount: number }>(`/reviews/artisan/${artisanId}/stats`),
+};
+
+// ─── Returns ──────────────────────────────────────────────────────────────────
+export interface Return {
+  id: string;
+  orderId: string;
+  orderTitle: string;
+  artisanId: string;
+  artisanName: string;
+  customerId: string;
+  customerName: string;
+  reason: string;
+  status: 'REQUESTED' | 'APPROVED' | 'REJECTED' | 'REFUNDED';
+  amount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const returnsApi = {
+  createReturn: (orderId: string, reason: string) =>
+    api.post<Return>(`/returns?orderId=${orderId}`, { reason }),
+  approveReturn: (returnId: string) =>
+    api.post(`/returns/${returnId}/approve`),
+  rejectReturn: (returnId: string) =>
+    api.post(`/returns/${returnId}/reject`),
+  getMyReturns: () =>
+    api.get<Return[]>('/returns/my'),
+  getAllReturns: () =>
+    api.get<Return[]>('/returns/my/all'),
+  getReturnByOrder: (orderId: string) =>
+    api.get<Return>(`/returns/order/${orderId}`),
+};
+
+// ─── Go Catalog & Portfolio Service ───────────────────────────────────────────
+const CATALOG_URL = process.env.NEXT_PUBLIC_CATALOG_API_URL || 'http://localhost:8081/api/v1';
+
+const catalogHttp = axios.create({
+  baseURL: CATALOG_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+
+catalogHttp.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('aynisindan_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export interface Portfolio {
+  id: string;
+  artisan_id: string;
+  full_name: string;
+  bio: string;
+  profession: string;
+  skills: string[];
+  rating_sum: number;
+  rating_count: number;
+  items: PortfolioItem[];
+}
+
+export interface PortfolioItem {
+  id: string;
+  order_id?: string;
+  title: string;
+  description: string;
+  image_url: string;
+  price: number;
+  completed_at: string;
+  rating: number;
+  comment: string;
+  is_manual: boolean;
+}
+
+export interface CatalogFeedItem {
+  id: string;
+  order_id?: string;
+  artisan_id: string;
+  artisan_name: string;
+  title: string;
+  description: string;
+  image_url: string;
+  price: number;
+  completed_at: string;
+  rating: number;
+  comment: string;
+  is_manual: boolean;
+}
+
+export const portfolioApi = {
+  getPortfolio: (artisanId: string) =>
+    catalogHttp.get<Portfolio>(`/portfolios/${artisanId}`),
+  updatePortfolio: (data: { full_name: string; bio: string; profession: string; skills: string[] }) =>
+    catalogHttp.post('/portfolios', data),
+  createItem: (data: { title: string; description: string; image_url: string; price: number }) =>
+    catalogHttp.post<PortfolioItem>('/portfolios/items', data),
+};
+
+export const catalogApi = {
+  getFeed: () =>
+    catalogHttp.get<CatalogFeedItem[]>('/catalog'),
 };
 
 export default api;

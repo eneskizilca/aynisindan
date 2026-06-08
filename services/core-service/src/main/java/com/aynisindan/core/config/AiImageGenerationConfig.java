@@ -15,6 +15,12 @@ public class AiImageGenerationConfig {
     @Value("${google.ai-studio.model-name}")
     private String modelName;
 
+    @Value("${ai.provider:google-ai-studio}")
+    private String provider;
+
+    @Value("${fal.api-key:}")
+    private String falApiKey;
+
     @Bean
     public RestClient aiStudioRestClient() {
         SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
@@ -28,11 +34,32 @@ public class AiImageGenerationConfig {
                 .build();
     }
 
+    @Bean
+    public RestClient falRestClient() {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(60000);
+        requestFactory.setReadTimeout(60000);
+
+        return RestClient.builder()
+                .baseUrl("https://fal.run")
+                .requestFactory(requestFactory)
+                .defaultHeader("Content-Type", "application/json")
+                .build();
+    }
+
     public String getApiKey() {
         return apiKey;
     }
 
     public String getModelName() {
         return modelName;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public String getFalApiKey() {
+        return falApiKey;
     }
 }

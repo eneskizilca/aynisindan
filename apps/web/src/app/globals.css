@@ -113,3 +113,54 @@
     @apply bg-red-50 text-red-600;
   }
 }
+
+/* ── Custom Theme Classes ────────────────────────────────────────── */
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(220, 214, 212, 0.5);
+}
+
+.glass-panel-dark {
+  background: rgba(35, 25, 22, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(222, 107, 72, 0.18);
+}
+
+.bg-blueprint-grid {
+  background-color: #fffaf9;
+  background-size: 40px 40px, 40px 40px, 10px 10px, 10px 10px;
+  background-image: 
+    linear-gradient(rgba(222, 107, 72, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(222, 107, 72, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(222, 107, 72, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(222, 107, 72, 0.02) 1px, transparent 1px);
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+}
+
+/* ── Scroll Driven Animations ────────────────────────────────────── */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    .scroll-reveal {
+      animation: fade-up 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 30%;
+    }
+  }
+}
+

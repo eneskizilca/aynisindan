@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import { ordersApi, Order } from '@/services/api';
 import OrderCard from '@/components/OrderCard';
 import Link from 'next/link';
@@ -9,9 +10,17 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 
 export default function OrdersPage() {
   const { user } = useAuth();
+  const router = useRouter();
+
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (user?.role === 'ARTISAN') {
+      router.replace('/workspace');
+    }
+  }, [user, router]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -27,7 +36,7 @@ export default function OrdersPage() {
     fetchOrders();
   }, []);
 
-  const viewMode = user?.role === 'ARTISAN' ? 'artisan' : 'customer';
+  const viewMode = 'customer';
 
   return (
     <div className="p-4 sm:p-8">

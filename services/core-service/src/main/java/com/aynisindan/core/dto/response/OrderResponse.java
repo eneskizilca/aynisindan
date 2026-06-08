@@ -1,5 +1,6 @@
 package com.aynisindan.core.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,6 +18,8 @@ public record OrderResponse(
         UUID customerId,
         String customerName,
         String artisanName,
+        BigDecimal agreedPrice,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        Boolean hasActiveReturn
 ) {}
