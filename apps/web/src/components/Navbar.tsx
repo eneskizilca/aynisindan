@@ -23,8 +23,20 @@ import {
   UserCircleIcon,
 } from '@heroicons/react/24/outline';
 
+const PinterestIcon = ({ className, ...props }: React.ComponentProps<'svg'>) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={`text-[#E60023] ${className || ''}`}
+    {...props}
+  >
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.4 7.62 11.17-.1-.95-.2-2.41.04-3.44.22-.94 1.4-5.97 1.4-5.97s-.36-.72-.36-1.78c0-1.67.97-2.92 2.18-2.92 1.03 0 1.53.77 1.53 1.69 0 1.04-.66 2.59-.99 4.03-.28 1.2.6 2.17 1.78 2.17 2.14 0 3.78-2.26 3.78-5.52 0-2.89-2.07-4.9-5.03-4.9-3.43 0-5.44 2.57-5.44 5.22 0 1.03.4 2.15.9 2.75.1.12.11.23.08.35-.09.37-.29 1.18-.33 1.34-.05.22-.17.26-.39.16-1.46-.68-2.37-2.82-2.37-4.54 0-3.69 2.68-7.09 7.74-7.09 4.06 0 7.22 2.89 7.22 6.77 0 4.04-2.54 7.28-6.07 7.28-1.19 0-2.31-.62-2.69-1.35l-.73 2.79c-.26 1.02-.98 2.3-1.46 3.08C9.72 23.77 10.84 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z" />
+  </svg>
+);
+
 const CUSTOMER_NAV = [
   { key: 'explore', label: 'Keşfet', href: '/explore', Icon: GlobeAltIcon },
+  { key: 'inspire', label: 'İlham Al', href: '/inspire', Icon: PinterestIcon },
   { key: 'orders', label: 'Siparişlerim', href: '/orders', Icon: ShoppingBagIcon },
   { key: 'messages', label: 'Mesajlar', href: '/messages', Icon: ChatBubbleLeftRightIcon },
 ];
