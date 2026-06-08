@@ -306,4 +306,32 @@ export const catalogApi = {
     catalogHttp.get<CatalogFeedItem[]>('/catalog'),
 };
 
+export interface ChatMessage {
+  id?: string;
+  senderId: string;
+  senderName: string;
+  receiverId: string;
+  receiverName: string;
+  content: string;
+  timestamp: string;
+  orderId?: string;
+  isRead: boolean;
+}
+
+export interface Conversation {
+  counterPartyId: string;
+  counterPartyName: string;
+  lastMessage: string;
+  lastTimestamp: string;
+  lastOrderId?: string;
+  unreadCount: number;
+}
+
+export const chatApi = {
+  getConversations: () =>
+    catalogHttp.get<Conversation[]>('/chat/conversations'),
+  getChatHistory: (otherUserId: string) =>
+    catalogHttp.get<ChatMessage[]>(`/chat/history?otherUserId=${otherUserId}`),
+};
+
 export default api;
