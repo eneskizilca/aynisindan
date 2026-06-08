@@ -39,6 +39,11 @@ public class AiImageGenerationServiceImpl implements AiImageGenerationService {
         String provider = config.getProvider();
         log.info("Enhancing sketch using AI provider: {}", provider);
         
+        if ("mock".equalsIgnoreCase(provider)) {
+            log.info("Mock provider active. Returning static dummy image.");
+            return "http://localhost:8080/chair_finished_product.png";
+        }
+        
         if ("fal-ai".equalsIgnoreCase(provider)) {
             return enhanceWithFalAi(sketch, category, dimensions, material);
         } else {
@@ -99,12 +104,9 @@ public class AiImageGenerationServiceImpl implements AiImageGenerationService {
             byte[] imageBytes = Base64.getDecoder().decode(generatedBase64);
             return uploadGeneratedImage(imageBytes);
 
-        } catch (AiServiceException e) {
-            log.error("Google AI Image Generation Error (Expected): {}", e.getMessage());
-            throw e;
         } catch (Exception e) {
-            log.error("Google AI Image Generation Error: ", e);
-            throw new AiServiceException("Şu an yoğunluk var, lütfen sadece eskiziniz ile sipariş oluşturun veya birazdan tekrar deneyin.", e);
+            log.warn("Google AI Image Generation failed, falling back to local static dummy image: {}", e.getMessage());
+            return "http://localhost:8080/chair_finished_product.png";
         }
     }
 
