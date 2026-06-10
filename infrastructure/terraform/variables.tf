@@ -42,8 +42,7 @@ variable "db_username" {
 
 variable "db_password" {
   type        = string
-  description = "Password for PostgreSQL database. Should be set via environment variable or tfvars"
-  default     = "aynisindansecurepwd123"
+  description = "Password for PostgreSQL database. Set via TF_VAR_db_password or terraform.tfvars"
   sensitive   = true
 }
 
