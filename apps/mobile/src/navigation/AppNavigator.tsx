@@ -19,6 +19,12 @@ import InspireScreen from '../screens/customer/InspireScreen';
 import MessagesScreen from '../screens/customer/MessagesScreen';
 import ProfileScreen from '../screens/customer/ProfileScreen';
 import ChatScreen from '../screens/customer/ChatScreen';
+import ArtisanTabHome from '../screens/artisan/ArtisanTabNavigator';
+import ArtisanQuotesScreen from '../screens/artisan/ArtisanQuotesScreen';
+import ArtisanPortfolioScreen from '../screens/artisan/ArtisanPortfolioScreen';
+import ArtisanWalletScreen from '../screens/artisan/ArtisanWalletScreen';
+import ArtisanSettingsScreen from '../screens/artisan/ArtisanSettingsScreen';
+import ArtisanOrderDetailScreen from '../screens/artisan/ArtisanOrderDetailScreen';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
@@ -113,40 +119,6 @@ function CustomerTabNavigator() {
   );
 }
 
-// Placeholder Artisan Dashboard Screen
-function ArtisanDashboard() {
-  const { user, logout } = useAuth();
-  return (
-    <SafeAreaView style={styles.dashboardContainer}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.welcomeText}>Merhaba,</Text>
-          <Text style={styles.nameText}>{user?.fullName || 'Zanaatkâr'}</Text>
-        </View>
-        <View style={styles.roleBadge}>
-          <Ionicons name="hammer-outline" size={14} color={theme.colors.primary} />
-          <Text style={styles.roleBadgeText}>Zanaatkâr</Text>
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.card}>
-          <Ionicons name="hammer-outline" size={40} color={theme.colors.primary} style={styles.cardIcon} />
-          <Text style={styles.cardTitle}>Zanaatkâr Paneli</Text>
-          <Text style={styles.cardDescription}>
-            Aynısından Zanaatkâr Paneline başarıyla giriş yaptınız. Çok yakında işlerinizi, portfolyonuzu ve tekliflerinizi buradan yönetebileceksiniz.
-          </Text>
-        </View>
-
-        <TouchableOpacity style={styles.logoutButton} onPress={logout} activeOpacity={0.8}>
-          <Ionicons name="log-out-outline" size={20} color="#fff" />
-          <Text style={styles.logoutText}>Güvenli Çıkış Yap</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-}
-
 export default function AppNavigator() {
   const { isAuthenticated, user, isLoading } = useAuth();
 
@@ -171,10 +143,19 @@ export default function AppNavigator() {
         <>
           {user?.role === 'ARTISAN' ? (
             // Artisan Flow
-            <Stack.Screen name="ArtisanHome" component={ArtisanDashboard} />
+            <Stack.Screen name="ArtisanHome" component={ArtisanTabHome} />
           ) : (
             // Customer Bottom Tab Navigator Flow
             <Stack.Screen name="CustomerTabHome" component={CustomerTabNavigator} />
+          )}
+          {user?.role === 'ARTISAN' && (
+            <>
+              <Stack.Screen name="ArtisanQuotes" component={ArtisanQuotesScreen} />
+              <Stack.Screen name="ArtisanPortfolio" component={ArtisanPortfolioScreen} />
+              <Stack.Screen name="ArtisanWallet" component={ArtisanWalletScreen} />
+              <Stack.Screen name="ArtisanSettings" component={ArtisanSettingsScreen} />
+              <Stack.Screen name="OrderDetail" component={ArtisanOrderDetailScreen} />
+            </>
           )}
           <Stack.Screen name="ChatDetail" component={ChatScreen} />
         </>
@@ -202,89 +183,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: theme.colors.background,
   },
-  dashboardContainer: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.lg,
-    paddingVertical: theme.spacing.xl,
-    borderBottomWidth: 1,
-    borderColor: theme.colors.border,
-    backgroundColor: '#fff',
-  },
-  welcomeText: {
-    fontSize: theme.typography.fontSizes.sm,
-    color: theme.colors.textMuted,
-  },
-  nameText: {
-    fontSize: theme.typography.fontSizes.lg,
-    fontWeight: theme.typography.fontWeights.bold,
-    color: theme.colors.textDark,
-  },
-  roleBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: theme.colors.primaryLight,
-    paddingHorizontal: theme.spacing.md,
-    paddingVertical: 6,
-    borderRadius: theme.borderRadius.round,
-    gap: 4,
-  },
-  roleBadgeText: {
-    fontSize: theme.typography.fontSizes.xs,
-    color: theme.colors.primary,
-    fontWeight: theme.typography.fontWeights.bold,
-  },
-  content: {
-    flex: 1,
-    padding: theme.spacing.lg,
-    justifyContent: 'center',
-    gap: theme.spacing.xl,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: theme.borderRadius.lg,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    padding: theme.spacing.xl,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 1,
-  },
-  cardIcon: {
-    marginBottom: theme.spacing.md,
-  },
-  cardTitle: {
-    fontSize: theme.typography.fontSizes.lg,
-    fontWeight: theme.typography.fontWeights.bold,
-    color: theme.colors.textDark,
-    marginBottom: theme.spacing.sm,
-  },
-  cardDescription: {
-    fontSize: theme.typography.fontSizes.sm,
-    color: theme.colors.textMuted,
-    textAlign: 'center',
-    lineHeight: 20,
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    backgroundColor: theme.colors.primary,
-    height: 48,
-    borderRadius: theme.borderRadius.md,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing.sm,
-  },
-  logoutText: {
-    color: '#fff',
-    fontSize: theme.typography.fontSizes.md,
-    fontWeight: theme.typography.fontWeights.semibold,
-  },
+
 });
