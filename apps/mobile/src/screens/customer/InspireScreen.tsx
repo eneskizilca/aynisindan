@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: theme.spacing.lg,
-    paddingBottom: 48,
+    paddingBottom: 100,
   },
   columnWrapper: {
     justifyContent: 'space-between',

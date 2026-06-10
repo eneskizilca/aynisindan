@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -43,11 +43,20 @@ function CustomerTabNavigator() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textSecondary,
         tabBarStyle: {
+          position: 'absolute',
+          bottom: Platform.OS === 'ios' ? 24 : 16,
+          left: 44,
+          right: 44,
           backgroundColor: '#fff',
-          borderTopWidth: 1,
-          borderTopColor: theme.colors.border,
+          borderRadius: 30,
           height: 64,
-          paddingBottom: 8,
+          borderTopWidth: 0,
+          shadowColor: '#231916',
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.08,
+          shadowRadius: 12,
+          elevation: 5,
+          paddingBottom: Platform.OS === 'ios' ? 6 : 0,
           paddingTop: 8,
         },
         tabBarLabelStyle: {

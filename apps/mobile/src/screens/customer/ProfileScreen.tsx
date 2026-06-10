@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     padding: theme.spacing.lg,
     gap: theme.spacing.lg,
     alignItems: 'center',
-    paddingBottom: 48,
+    paddingBottom: 100,
   },
   profileCard: {
     width: '100%',

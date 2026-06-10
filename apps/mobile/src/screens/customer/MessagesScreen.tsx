@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     padding: theme.spacing.lg,
+    paddingBottom: 100,
   },
   threadCard: {
     flexDirection: 'row',
