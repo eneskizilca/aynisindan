@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'apps/mobile/**'
-      - 'README.md'
+    paths:
+      - 'apps/web/**'
+      - 'services/**'
+      - 'docker-compose*'
 
 jobs:
   deploy:
