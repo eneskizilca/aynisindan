@@ -195,7 +195,12 @@ export default function NewOrderScreen({ navigation, route }: any) {
 
       navigation.navigate('CustomerHome');
     } catch (err: any) {
-      setError(err?.response?.data?.message || 'Sipariş oluşturulamadı.');
+      console.error('Order submit error:', JSON.stringify(err?.response?.data, null, 2));
+      const data = err?.response?.data;
+      const msg =
+        typeof data === 'string' ? data :
+        data?.message || data?.error || 'Sipariş oluşturulamadı.';
+      setError(msg);
     } finally {
       setIsLoading(false);
     }
