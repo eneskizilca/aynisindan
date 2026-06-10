@@ -7,41 +7,12 @@ import { theme } from '../theme/theme';
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 
+// Customer Screens
+import CustomerOrdersScreen from '../screens/customer/CustomerOrdersScreen';
+import NewOrderScreen from '../screens/customer/NewOrderScreen';
+import OrderDetailScreen from '../screens/customer/OrderDetailScreen';
+
 const Stack = createNativeStackNavigator();
-
-// Placeholder Customer Dashboard Screen
-function CustomerDashboard() {
-  const { user, logout } = useAuth();
-  return (
-    <SafeAreaView style={styles.dashboardContainer}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.welcomeText}>Merhaba,</Text>
-          <Text style={styles.nameText}>{user?.fullName || 'Müşteri'}</Text>
-        </View>
-        <View style={styles.roleBadge}>
-          <Ionicons name="cart-outline" size={14} color={theme.colors.primary} />
-          <Text style={styles.roleBadgeText}>Müşteri</Text>
-        </View>
-      </View>
-
-      <View style={styles.content}>
-        <View style={styles.card}>
-          <Ionicons name="sparkles-outline" size={40} color={theme.colors.primary} style={styles.cardIcon} />
-          <Text style={styles.cardTitle}>Müşteri Paneli</Text>
-          <Text style={styles.cardDescription}>
-            Aynısından Mobil Uygulamasına başarıyla giriş yaptınız. Çok yakında siparişlerinizi ve tekliflerinizi buradan yönetebileceksiniz.
-          </Text>
-        </View>
-
-        <TouchableOpacity style={styles.logoutButton} onPress={logout} activeOpacity={0.8}>
-          <Ionicons name="log-out-outline" size={20} color="#fff" />
-          <Text style={styles.logoutText}>Güvenli Çıkış Yap</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
-}
 
 // Placeholder Artisan Dashboard Screen
 function ArtisanDashboard() {
@@ -100,9 +71,15 @@ export default function AppNavigator() {
         // App Flow based on Role
         <>
           {user?.role === 'ARTISAN' ? (
+            // Artisan Flow
             <Stack.Screen name="ArtisanHome" component={ArtisanDashboard} />
           ) : (
-            <Stack.Screen name="CustomerHome" component={CustomerDashboard} />
+            // Customer Flow Stack
+            <>
+              <Stack.Screen name="CustomerHome" component={CustomerOrdersScreen} />
+              <Stack.Screen name="NewOrder" component={NewOrderScreen} />
+              <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
+            </>
           )}
         </>
       )}
