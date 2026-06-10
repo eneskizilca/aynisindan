@@ -10,6 +10,7 @@ import {
   Platform,
   ScrollView,
   SafeAreaView,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../contexts/AuthContext';
@@ -69,9 +70,7 @@ export default function RegisterScreen({ navigation }: any) {
         >
           {/* Logo Container */}
           <View style={styles.logoContainer}>
-            <View style={styles.logoBadge}>
-              <Ionicons name="basket-outline" size={40} color={theme.colors.primary} />
-            </View>
+            <Image source={require('../../../assets/logo.png')} style={styles.logo} />
             <Text style={styles.logoText}>Aynısından</Text>
             <Text style={styles.logoSub}>Zanaatkarlar & Müşteriler</Text>
           </View>
@@ -331,16 +330,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: theme.spacing.lg,
   },
-  logoBadge: {
+  logo: {
     width: 60,
     height: 60,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.card,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: theme.colors.border,
     marginBottom: theme.spacing.xs,
+    resizeMode: 'contain',
   },
   logoText: {
     fontSize: theme.typography.fontSizes.xl,

@@ -1,45 +1,115 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator, Platform, Dimensions } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { theme } from '../theme/theme';
+
+// Auth Screens
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 
+// Customer Screens
+import CustomerOrdersScreen from '../screens/customer/CustomerOrdersScreen';
+import NewOrderScreen from '../screens/customer/NewOrderScreen';
+import OrderDetailScreen from '../screens/customer/OrderDetailScreen';
+import ExploreScreen from '../screens/customer/ExploreScreen';
+import InspireScreen from '../screens/customer/InspireScreen';
+import MessagesScreen from '../screens/customer/MessagesScreen';
+import ProfileScreen from '../screens/customer/ProfileScreen';
+import ChatScreen from '../screens/customer/ChatScreen';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
-// Placeholder Customer Dashboard Screen
-function CustomerDashboard() {
-  const { user, logout } = useAuth();
+// Nested Customer Stack Navigator for Orders Flow
+function CustomerOrdersStack() {
   return (
-    <SafeAreaView style={styles.dashboardContainer}>
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.welcomeText}>Merhaba,</Text>
-          <Text style={styles.nameText}>{user?.fullName || 'Müşteri'}</Text>
-        </View>
-        <View style={styles.roleBadge}>
-          <Ionicons name="cart-outline" size={14} color={theme.colors.primary} />
-          <Text style={styles.roleBadgeText}>Müşteri</Text>
-        </View>
-      </View>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="CustomerOrdersList" component={CustomerOrdersScreen} />
+      <Stack.Screen name="NewOrder" component={NewOrderScreen} />
+      <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
+    </Stack.Navigator>
+  );
+}
 
-      <View style={styles.content}>
-        <View style={styles.card}>
-          <Ionicons name="sparkles-outline" size={40} color={theme.colors.primary} style={styles.cardIcon} />
-          <Text style={styles.cardTitle}>Müşteri Paneli</Text>
-          <Text style={styles.cardDescription}>
-            Aynısından Mobil Uygulamasına başarıyla giriş yaptınız. Çok yakında siparişlerinizi ve tekliflerinizi buradan yönetebileceksiniz.
-          </Text>
-        </View>
+// 5-Tab Customer Bottom Tab Navigator
+function CustomerTabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarStyle: {
+          position: 'absolute',
+          bottom: Platform.OS === 'ios' ? 24 : 16,
+          left: 0,
+          right: 0,
+          marginHorizontal: 20,
+          backgroundColor: '#fff',
+          borderRadius: 30,
+          height: 64,
+          borderTopWidth: 0,
+          shadowColor: '#231916',
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.08,
+          shadowRadius: 12,
+          elevation: 5,
+          paddingBottom: Platform.OS === 'ios' ? 6 : 0,
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '600',
+        },
+        tabBarIcon: ({ focused, color }) => {
+          let iconName: any;
 
-        <TouchableOpacity style={styles.logoutButton} onPress={logout} activeOpacity={0.8}>
-          <Ionicons name="log-out-outline" size={20} color="#fff" />
-          <Text style={styles.logoutText}>Güvenli Çıkış Yap</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+          if (route.name === 'OrdersTab') {
+            iconName = focused ? 'clipboard' : 'clipboard-outline';
+          } else if (route.name === 'ExploreTab') {
+            iconName = focused ? 'search' : 'search-outline';
+          } else if (route.name === 'InspireTab') {
+            iconName = focused ? 'sparkles' : 'sparkles-outline';
+          } else if (route.name === 'MessagesTab') {
+            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
+          } else if (route.name === 'ProfileTab') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={20} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen
+        name="OrdersTab"
+        component={CustomerOrdersStack}
+        options={{ tabBarLabel: 'Siparişlerim' }}
+      />
+      <Tab.Screen
+        name="ExploreTab"
+        component={ExploreScreen}
+        options={{ tabBarLabel: 'Keşfet' }}
+      />
+      <Tab.Screen
+        name="InspireTab"
+        component={InspireScreen}
+        options={{ tabBarLabel: 'İlham Al' }}
+      />
+      <Tab.Screen
+        name="MessagesTab"
+        component={MessagesScreen}
+        options={{ tabBarLabel: 'Mesajlar' }}
+      />
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileScreen}
+        options={{ tabBarLabel: 'Profil' }}
+      />
+    </Tab.Navigator>
   );
 }
 
@@ -100,10 +170,13 @@ export default function AppNavigator() {
         // App Flow based on Role
         <>
           {user?.role === 'ARTISAN' ? (
+            // Artisan Flow
             <Stack.Screen name="ArtisanHome" component={ArtisanDashboard} />
           ) : (
-            <Stack.Screen name="CustomerHome" component={CustomerDashboard} />
+            // Customer Bottom Tab Navigator Flow
+            <Stack.Screen name="CustomerTabHome" component={CustomerTabNavigator} />
           )}
+          <Stack.Screen name="ChatDetail" component={ChatScreen} />
         </>
       )}
     </Stack.Navigator>

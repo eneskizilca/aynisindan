@@ -42,7 +42,18 @@ variable "db_username" {
 
 variable "db_password" {
   type        = string
-  description = "Password for PostgreSQL database. Should be set via environment variable or tfvars"
-  default     = "aynisindansecurepwd123"
+  description = "Password for PostgreSQL database. Set via TF_VAR_db_password or terraform.tfvars"
+  sensitive   = true
+}
+
+variable "aws_access_key" {
+  type        = string
+  description = "AWS IAM access key for S3 uploads. Set via TF_VAR_aws_access_key or terraform.tfvars"
+  sensitive   = true
+}
+
+variable "aws_secret_key" {
+  type        = string
+  description = "AWS IAM secret key for S3 uploads. Set via TF_VAR_aws_secret_key or terraform.tfvars"
   sensitive   = true
 }
