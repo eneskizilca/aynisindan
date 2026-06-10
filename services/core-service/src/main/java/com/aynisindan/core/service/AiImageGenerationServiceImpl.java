@@ -10,7 +10,6 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.Base64;
@@ -249,7 +248,6 @@ public class AiImageGenerationServiceImpl implements AiImageGenerationService {
                     .bucket(bucketName)
                     .key(uniqueFilename)
                     .contentType("image/png")
-                    .acl(ObjectCannedACL.PUBLIC_READ)
                     .build();
 
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(imageBytes));
