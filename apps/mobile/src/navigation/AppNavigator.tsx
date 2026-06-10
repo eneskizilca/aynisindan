@@ -48,7 +48,7 @@ function CustomerTabNavigator() {
           bottom: Platform.OS === 'ios' ? 24 : 16,
           left: 0,
           right: 0,
-          marginHorizontal: 28,
+          marginHorizontal: 20,
           backgroundColor: '#fff',
           borderRadius: 30,
           height: 64,
