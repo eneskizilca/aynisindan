@@ -196,7 +196,15 @@ export default function ChatScreen({ route, navigation }: any) {
         {orderId ? (
           <TouchableOpacity
             style={styles.orderButton}
-            onPress={() => navigation.navigate('OrdersTab', { screen: 'OrderDetail', params: { id: orderId } })}
+            onPress={() =>
+              navigation.navigate('CustomerTabHome', {
+                screen: 'OrdersTab',
+                params: {
+                  screen: 'OrderDetail',
+                  params: { id: orderId },
+                },
+              })
+            }
           >
             <Ionicons name="receipt-outline" size={18} color={theme.colors.primary} />
             <Text style={styles.orderButtonText}>Sipariş</Text>
