@@ -1,9 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
 import { theme } from '../theme/theme';
+
+// Auth Screens
 import LoginScreen from '../screens/auth/LoginScreen';
 import RegisterScreen from '../screens/auth/RegisterScreen';
 
@@ -11,8 +14,92 @@ import RegisterScreen from '../screens/auth/RegisterScreen';
 import CustomerOrdersScreen from '../screens/customer/CustomerOrdersScreen';
 import NewOrderScreen from '../screens/customer/NewOrderScreen';
 import OrderDetailScreen from '../screens/customer/OrderDetailScreen';
+import ExploreScreen from '../screens/customer/ExploreScreen';
+import InspireScreen from '../screens/customer/InspireScreen';
+import MessagesScreen from '../screens/customer/MessagesScreen';
+import ProfileScreen from '../screens/customer/ProfileScreen';
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+// Nested Customer Stack Navigator for Orders Flow
+function CustomerOrdersStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="CustomerOrdersList" component={CustomerOrdersScreen} />
+      <Stack.Screen name="NewOrder" component={NewOrderScreen} />
+      <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
+    </Stack.Navigator>
+  );
+}
+
+// 5-Tab Customer Bottom Tab Navigator
+function CustomerTabNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textSecondary,
+        tabBarStyle: {
+          backgroundColor: '#fff',
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.border,
+          height: 64,
+          paddingBottom: 8,
+          paddingTop: 8,
+        },
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '600',
+        },
+        tabBarIcon: ({ focused, color }) => {
+          let iconName: any;
+
+          if (route.name === 'OrdersTab') {
+            iconName = focused ? 'clipboard' : 'clipboard-outline';
+          } else if (route.name === 'ExploreTab') {
+            iconName = focused ? 'search' : 'search-outline';
+          } else if (route.name === 'InspireTab') {
+            iconName = focused ? 'sparkles' : 'sparkles-outline';
+          } else if (route.name === 'MessagesTab') {
+            iconName = focused ? 'chatbubbles' : 'chatbubbles-outline';
+          } else if (route.name === 'ProfileTab') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
+
+          return <Ionicons name={iconName} size={20} color={color} />;
+        },
+      })}
+    >
+      <Tab.Screen
+        name="OrdersTab"
+        component={CustomerOrdersStack}
+        options={{ tabBarLabel: 'Siparişlerim' }}
+      />
+      <Tab.Screen
+        name="ExploreTab"
+        component={ExploreScreen}
+        options={{ tabBarLabel: 'Keşfet' }}
+      />
+      <Tab.Screen
+        name="InspireTab"
+        component={InspireScreen}
+        options={{ tabBarLabel: 'İlham Al' }}
+      />
+      <Tab.Screen
+        name="MessagesTab"
+        component={MessagesScreen}
+        options={{ tabBarLabel: 'Mesajlar' }}
+      />
+      <Tab.Screen
+        name="ProfileTab"
+        component={ProfileScreen}
+        options={{ tabBarLabel: 'Profil' }}
+      />
+    </Tab.Navigator>
+  );
+}
 
 // Placeholder Artisan Dashboard Screen
 function ArtisanDashboard() {
@@ -74,12 +161,8 @@ export default function AppNavigator() {
             // Artisan Flow
             <Stack.Screen name="ArtisanHome" component={ArtisanDashboard} />
           ) : (
-            // Customer Flow Stack
-            <>
-              <Stack.Screen name="CustomerHome" component={CustomerOrdersScreen} />
-              <Stack.Screen name="NewOrder" component={NewOrderScreen} />
-              <Stack.Screen name="OrderDetail" component={OrderDetailScreen} />
-            </>
+            // Customer Bottom Tab Navigator Flow
+            <Stack.Screen name="CustomerTabHome" component={CustomerTabNavigator} />
           )}
         </>
       )}
