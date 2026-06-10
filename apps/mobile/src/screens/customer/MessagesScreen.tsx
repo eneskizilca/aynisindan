@@ -1,61 +1,97 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   StyleSheet,
   View,
   Text,
   FlatList,
   TouchableOpacity,
-  Image,
   SafeAreaView,
+  ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import { chatApi, Conversation } from '../../services/api';
 import { theme } from '../../theme/theme';
 
-const MOCK_CONVERSATIONS = [
-  {
-    id: '1',
-    name: 'Mehmet Usta',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150',
-    lastMessage: 'Masa siparişinizin epoksi dökümünü bugün yapıyorum.',
-    time: '14:23',
-    unreadCount: 2,
-    role: 'Ahşap Zanaatkârı',
-  },
-  {
-    id: '2',
-    name: 'Ayşe Kaya',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150',
-    lastMessage: 'Tabii, vazo ölçülerini 30cm olarak güncelleyebiliriz.',
-    time: 'Dün',
-    unreadCount: 0,
-    role: 'Seramik Zanaatkârı',
-  },
-  {
-    id: '3',
-    name: 'Ahmet Yılmaz',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-    lastMessage: 'Kargo takip numarasını sisteme girdim, bilginiz olsun.',
-    time: 'Pzt',
-    unreadCount: 0,
-    role: 'Deri Zanaatkârı',
-  },
-];
+export default function MessagesScreen({ navigation }: any) {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState('');
 
-export default function MessagesScreen() {
-  const renderConversationItem = ({ item }: { item: typeof MOCK_CONVERSATIONS[0] }) => (
-    <TouchableOpacity style={styles.threadCard} activeOpacity={0.8}>
-      <Image source={{ uri: item.avatar }} style={styles.avatar} />
-      
+  const fetchConversations = useCallback(async (showLoader = true) => {
+    if (showLoader) setIsLoading(true);
+    setError('');
+    try {
+      const res = await chatApi.getConversations();
+      setConversations(res.data || []);
+    } catch (err: any) {
+      console.error('Fetch conversations error:', err);
+      setError('Mesajlar yüklenirken bir hata oluştu.');
+    } finally {
+      setIsLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
+
+  // Fetch when screen focuses to ensure updated unread counts
+  useFocusEffect(
+    useCallback(() => {
+      fetchConversations(false);
+    }, [fetchConversations])
+  );
+
+  useEffect(() => {
+    fetchConversations(true);
+  }, [fetchConversations]);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchConversations(false);
+  };
+
+  const handleSelectConversation = (item: Conversation) => {
+    navigation.navigate('ChatDetail', {
+      otherUserId: item.counterPartyId,
+      otherUserName: item.counterPartyName,
+      orderId: item.lastOrderId,
+    });
+  };
+
+  const formatTime = (isoString: string) => {
+    try {
+      const date = new Date(isoString);
+      return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return '';
+    }
+  };
+
+  const renderConversationItem = ({ item }: { item: Conversation }) => (
+    <TouchableOpacity
+      style={styles.threadCard}
+      activeOpacity={0.8}
+      onPress={() => handleSelectConversation(item)}
+    >
+      <View style={styles.avatar}>
+        <Ionicons name="person" size={24} color={theme.colors.primary} />
+      </View>
+
       <View style={styles.threadInfo}>
         <View style={styles.headerRow}>
-          <Text style={styles.nameText}>{item.name}</Text>
-          <Text style={styles.timeText}>{item.time}</Text>
+          <Text style={styles.nameText}>{item.counterPartyName}</Text>
+          <Text style={styles.timeText}>{formatTime(item.lastTimestamp)}</Text>
         </View>
-        
-        <Text style={styles.roleText}>{item.role}</Text>
-        
+
         <View style={styles.msgRow}>
-          <Text style={styles.msgText} numberOfLines={1}>
+          <Text
+            style={[
+              styles.msgText,
+              item.unreadCount > 0 ? styles.msgTextUnread : null,
+            ]}
+            numberOfLines={1}
+          >
             {item.lastMessage}
           </Text>
           {item.unreadCount > 0 ? (
@@ -64,6 +100,13 @@ export default function MessagesScreen() {
             </View>
           ) : null}
         </View>
+
+        {item.lastOrderId && (
+          <View style={styles.orderBadge}>
+            <Ionicons name="receipt-outline" size={10} color={theme.colors.primary} />
+            <Text style={styles.orderBadgeText}>İlişkili Sipariş</Text>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -77,18 +120,39 @@ export default function MessagesScreen() {
         </Text>
       </View>
 
-      <FlatList
-        data={MOCK_CONVERSATIONS}
-        keyExtractor={(item) => item.id}
-        renderItem={renderConversationItem}
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <Ionicons name="chatbubbles-outline" size={48} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyText}>Henüz hiç mesajınız bulunmuyor.</Text>
-          </View>
-        }
-      />
+      {isLoading ? (
+        <View style={styles.centerContainer}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : error ? (
+        <View style={styles.centerContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={() => fetchConversations(true)}>
+            <Text style={styles.retryText}>Tekrar Dene</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <FlatList
+          data={conversations}
+          keyExtractor={(item) => item.counterPartyId}
+          renderItem={renderConversationItem}
+          contentContainerStyle={styles.listContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={[theme.colors.primary]}
+              tintColor={theme.colors.primary}
+            />
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Ionicons name="chatbubbles-outline" size={48} color={theme.colors.textSecondary} />
+              <Text style={styles.emptyText}>Henüz hiç mesajınız bulunmuyor.</Text>
+            </View>
+          }
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -130,9 +194,14 @@ const styles = StyleSheet.create({
     gap: theme.spacing.md,
   },
   avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: theme.colors.primaryLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: theme.colors.border,
   },
   threadInfo: {
     flex: 1,
@@ -152,11 +221,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: theme.colors.textSecondary,
   },
-  roleText: {
-    fontSize: 10,
-    color: theme.colors.primary,
-    fontWeight: theme.typography.fontWeights.semibold,
-  },
   msgRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -169,6 +233,10 @@ const styles = StyleSheet.create({
     color: theme.colors.textMuted,
     flex: 1,
   },
+  msgTextUnread: {
+    fontWeight: 'bold',
+    color: theme.colors.textDark,
+  },
   unreadBadge: {
     backgroundColor: theme.colors.primary,
     width: 18,
@@ -180,6 +248,44 @@ const styles = StyleSheet.create({
   unreadCountText: {
     color: '#fff',
     fontSize: 9,
+    fontWeight: 'bold',
+  },
+  orderBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.colors.primaryLight,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+    marginTop: 4,
+    gap: 4,
+  },
+  orderBadgeText: {
+    fontSize: 9,
+    color: theme.colors.primary,
+    fontWeight: 'bold',
+  },
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: theme.spacing.xl,
+  },
+  errorText: {
+    color: theme.colors.error,
+    fontSize: theme.typography.fontSizes.sm,
+    textAlign: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  retryButton: {
+    backgroundColor: theme.colors.primary,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+  },
+  retryText: {
+    color: '#fff',
     fontWeight: 'bold',
   },
   emptyContainer: {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -28,7 +28,7 @@ const CATEGORIES = [
   { value: 'Diger', label: 'Diğer' },
 ];
 
-export default function NewOrderScreen({ navigation }: any) {
+export default function NewOrderScreen({ navigation, route }: any) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
@@ -37,6 +37,19 @@ export default function NewOrderScreen({ navigation }: any) {
 
   const [uploadMode, setUploadMode] = useState<'local' | 'url'>('local');
   const [referenceImageUrl, setReferenceImageUrl] = useState('');
+
+  useEffect(() => {
+    if (route.params) {
+      const { referenceImageUrl: paramUrl, title: paramTitle } = route.params;
+      if (paramUrl) {
+        setReferenceImageUrl(paramUrl);
+        setUploadMode('url');
+      }
+      if (paramTitle) {
+        setTitle(paramTitle);
+      }
+    }
+  }, [route.params]);
 
   // Local image states
   const [imageUri, setImageUri] = useState<string | null>(null);

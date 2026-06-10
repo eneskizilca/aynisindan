@@ -31,21 +31,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Stats Grid */}
-        <View style={styles.statsGrid}>
-          <View style={styles.statBox}>
-            <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>Siparişler</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statNumber}>3</Text>
-            <Text style={styles.statLabel}>Zanaatkârlar</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statNumber}>4.9</Text>
-            <Text style={styles.statLabel}>Puanım</Text>
-          </View>
-        </View>
 
         {/* Menu Items */}
         <View style={styles.menuContainer}>

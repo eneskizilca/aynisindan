@@ -233,4 +233,111 @@ export const returnsApi = {
     api.get<Return>(`/returns/order/${orderId}`),
 };
 
+// ─── Go Catalog & Portfolio Service ───────────────────────────────────────────
+const CATALOG_BASE_URL = 'http://18.192.48.116:8081/api/v1';
+
+export const catalogHttp = axios.create({
+  baseURL: CATALOG_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+catalogHttp.interceptors.request.use(
+  async (config) => {
+    try {
+      const token = await SecureStore.getItemAsync('aynisindan_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      console.error('Error fetching token from SecureStore', error);
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export interface Portfolio {
+  id: string;
+  artisan_id: string;
+  full_name: string;
+  bio: string;
+  profession: string;
+  skills: string[];
+  rating_sum: number;
+  rating_count: number;
+  items: PortfolioItem[];
+}
+
+export interface PortfolioItem {
+  id: string;
+  order_id?: string;
+  title: string;
+  description: string;
+  image_url: string;
+  price: number;
+  completed_at: string;
+  rating: number;
+  comment: string;
+  is_manual: boolean;
+}
+
+export interface CatalogFeedItem {
+  id: string;
+  order_id?: string;
+  artisan_id: string;
+  artisan_name: string;
+  title: string;
+  description: string;
+  image_url: string;
+  price: number;
+  completed_at: string;
+  rating: number;
+  comment: string;
+  is_manual: boolean;
+}
+
+export const portfolioApi = {
+  getPortfolio: (artisanId: string) =>
+    catalogHttp.get<Portfolio>(`/portfolios/${artisanId}`),
+  updatePortfolio: (data: { full_name: string; bio: string; profession: string; skills: string[] }) =>
+    catalogHttp.post('/portfolios', data),
+  createItem: (data: { title: string; description: string; image_url: string; price: number }) =>
+    catalogHttp.post<PortfolioItem>('/portfolios/items', data),
+};
+
+export const catalogApi = {
+  getFeed: () =>
+    catalogHttp.get<CatalogFeedItem[]>('/catalog'),
+};
+
+export interface ChatMessage {
+  id?: string;
+  senderId: string;
+  senderName: string;
+  receiverId: string;
+  receiverName: string;
+  content: string;
+  timestamp: string;
+  orderId?: string;
+  isRead: boolean;
+}
+
+export interface Conversation {
+  counterPartyId: string;
+  counterPartyName: string;
+  lastMessage: string;
+  lastTimestamp: string;
+  lastOrderId?: string;
+  unreadCount: number;
+}
+
+export const chatApi = {
+  getConversations: () =>
+    catalogHttp.get<Conversation[]>('/chat/conversations'),
+  getChatHistory: (otherUserId: string) =>
+    catalogHttp.get<ChatMessage[]>(`/chat/history?otherUserId=${otherUserId}`),
+};
+
 export default api;

@@ -369,7 +369,13 @@ export default function OrderDetailScreen({ route, navigation }: any) {
             <TouchableOpacity
               style={styles.chatButton}
               onPress={() => {
-                Alert.alert('Bilgi', 'Anlık mesajlaşma ekranı yakında eklenecektir.');
+                if (chatTarget) {
+                  navigation.navigate('ChatDetail', {
+                    otherUserId: chatTarget.id,
+                    otherUserName: chatTarget.name,
+                    orderId: order?.id,
+                  });
+                }
               }}
             >
               <Text style={styles.chatButtonText}>Mesaj Gönder</Text>

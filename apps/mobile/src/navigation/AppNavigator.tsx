@@ -18,6 +18,7 @@ import ExploreScreen from '../screens/customer/ExploreScreen';
 import InspireScreen from '../screens/customer/InspireScreen';
 import MessagesScreen from '../screens/customer/MessagesScreen';
 import ProfileScreen from '../screens/customer/ProfileScreen';
+import ChatScreen from '../screens/customer/ChatScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -164,6 +165,7 @@ export default function AppNavigator() {
             // Customer Bottom Tab Navigator Flow
             <Stack.Screen name="CustomerTabHome" component={CustomerTabNavigator} />
           )}
+          <Stack.Screen name="ChatDetail" component={ChatScreen} />
         </>
       )}
     </Stack.Navigator>
