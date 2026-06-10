@@ -368,6 +368,8 @@ resource "aws_instance" "app_server" {
               SPRING_DATASOURCE_URL=jdbc:postgresql://${aws_db_instance.rds.endpoint}/aynisindan_core
               SPRING_DATASOURCE_USERNAME=${var.db_username}
               SPRING_DATASOURCE_PASSWORD=${var.db_password}
+              AWS_ACCESS_KEY=${var.aws_access_key}
+              AWS_SECRET_KEY=${var.aws_secret_key}
               AWS_REGION=${var.aws_region}
               AWS_S3_BUCKET=${aws_s3_bucket.sketch_bucket.id}
               MONGO_URI=mongodb://mongo:27017/aynisindan

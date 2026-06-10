@@ -46,3 +46,15 @@ variable "db_password" {
   default     = "aynisindansecurepwd123"
   sensitive   = true
 }
+
+variable "aws_access_key" {
+  type        = string
+  description = "AWS IAM access key for S3 uploads. Set via TF_VAR_aws_access_key or terraform.tfvars"
+  sensitive   = true
+}
+
+variable "aws_secret_key" {
+  type        = string
+  description = "AWS IAM secret key for S3 uploads. Set via TF_VAR_aws_secret_key or terraform.tfvars"
+  sensitive   = true
+}
