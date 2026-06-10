@@ -2,6 +2,9 @@
 
 import { Quote } from '@/services/api';
 import { StarIcon, ClockIcon, ShieldCheckIcon } from '@heroicons/react/24/solid';
+import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface QuoteCardProps {
   quote: Quote;
@@ -11,6 +14,9 @@ interface QuoteCardProps {
 }
 
 export default function QuoteCard({ quote, onAccept, isAccepting, isBestMatch }: QuoteCardProps) {
+  const { user } = useAuth();
+  const isCustomer = user?.role === 'CUSTOMER';
+
   return (
     <div className={`card p-5 relative ${isBestMatch ? 'border-[#de6b48]' : ''}`}>
       {isBestMatch && (
@@ -62,20 +68,31 @@ export default function QuoteCard({ quote, onAccept, isAccepting, isBestMatch }:
       )}
 
       {/* Teklifi Kabul Et */}
-      {onAccept && quote.status === 'PENDING' && (
-        <div className="mt-4 flex justify-end">
-          <button
-            onClick={() => onAccept(quote.id)}
-            disabled={isAccepting}
-            className={`flex items-center gap-2 text-sm px-5 py-2.5 rounded-lg font-semibold transition-all duration-150 active:scale-[0.98] ${
-              isBestMatch
-                ? 'btn-primary'
-                : 'btn-outline-primary'
-            }`}
-          >
-            <ShieldCheckIcon className="w-4 h-4" />
-            {isAccepting ? 'Kabul Ediliyor…' : 'Teklifi Kabul Et'}
-          </button>
+      {quote.status === 'PENDING' && (
+        <div className="mt-4 flex justify-end gap-3">
+          {isCustomer && (
+            <Link
+              href={`/messages?userId=${quote.artisanId}&userName=${encodeURIComponent(quote.artisanName)}&orderId=${quote.orderId}`}
+              className="flex items-center gap-2 text-sm px-5 py-2.5 rounded-lg font-semibold transition-all duration-150 active:scale-[0.98] border border-[#ddc0b9] bg-white text-[#56423d] hover:bg-[#fff1ed]"
+            >
+              <ChatBubbleLeftRightIcon className="w-4 h-4 text-[#de6b48]" />
+              Sohbet Et
+            </Link>
+          )}
+          {onAccept && (
+            <button
+              onClick={() => onAccept(quote.id)}
+              disabled={isAccepting}
+              className={`flex items-center gap-2 text-sm px-5 py-2.5 rounded-lg font-semibold transition-all duration-150 active:scale-[0.98] ${
+                isBestMatch
+                  ? 'btn-primary'
+                  : 'btn-outline-primary'
+              }`}
+            >
+              <ShieldCheckIcon className="w-4 h-4" />
+              {isAccepting ? 'Kabul Ediliyor…' : 'Teklifi Kabul Et'}
+            </button>
+          )}
         </div>
       )}
 

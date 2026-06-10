@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   # ───────── PostgreSQL ─────────
   postgres:
@@ -5,22 +7,22 @@ services:
     container_name: aynisindan-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       POSTGRES_DB: aynisindan_core
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U admin -d aynisindan_core" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${SPRING_DATASOURCE_USERNAME} -d aynisindan_core" ]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
       - app-network
 
-  # ───────── MongoDB (Golang Servisleri İçin) ─────────
+  # ───────── MongoDB ─────────
   mongo:
     image: mongo:6.0
     container_name: aynisindan-mongo
@@ -34,17 +36,15 @@ services:
 
   # ───────── Spring Boot Backend ─────────
   backend:
-    build:
-      context: ./services/core-service
-      dockerfile: Dockerfile
+    image: 669403677178.dkr.ecr.eu-central-1.amazonaws.com/aynisindan-backend:latest
     container_name: aynisindan-backend
     restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/aynisindan_core
-      SPRING_DATASOURCE_USERNAME: admin
-      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
       AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
       AWS_SECRET_KEY: ${AWS_SECRET_KEY}
       AWS_S3_BUCKET: ${AWS_S3_BUCKET}
@@ -61,22 +61,14 @@ services:
 
   # ───────── Next.js Frontend ─────────
   frontend:
-    build:
-      context: ./apps/web
-      dockerfile: Dockerfile
+    image: 669403677178.dkr.ecr.eu-central-1.amazonaws.com/aynisindan-frontend:latest
     container_name: aynisindan-frontend
     restart: unless-stopped
     ports:
       - "3000:3000"
-    volumes:
-      - ./apps/web:/app
-      - /app/node_modules
-      - /app/.next
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
-      NEXT_PUBLIC_CATALOG_API_URL: http://localhost:8081/api/v1
-      CHOKIDAR_USEPOLLING: "true"
-    command: npm run dev
+      NEXT_PUBLIC_API_URL: http://18.192.48.116:8080/api/v1
+      NEXT_PUBLIC_CATALOG_API_URL: http://18.192.48.116:8081/api/v1
     depends_on:
       - backend
     networks:
@@ -84,9 +76,7 @@ services:
 
   # ───────── Go Chat & Catalog Service ─────────
   chat-catalog-service:
-    build:
-      context: ./services/chat-catalog-service
-      dockerfile: Dockerfile
+    image: 669403677178.dkr.ecr.eu-central-1.amazonaws.com/aynisindan-chat-catalog:latest
     container_name: aynisindan-chat-catalog
     restart: unless-stopped
     ports:
@@ -94,7 +84,7 @@ services:
     environment:
       MONGO_URI: mongodb://mongo:27017/aynisindan
       PORT: 8081
-      JWT_SECRET: aynisindanplatformusecretkeyformjwttokengenerationmustbelongenough
+      JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - mongo
     networks:

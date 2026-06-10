@@ -1,0 +1,14 @@
+# Local terraform state
+*.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Terraform directories
+.terraform/
+
+# Checkpoint files
+.terraform.lock.hcl
