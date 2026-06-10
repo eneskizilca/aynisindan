@@ -18,6 +18,7 @@ import {
   StarIcon as StarOutline,
   ArrowPathIcon,
   ClockIcon,
+  ChatBubbleLeftRightIcon,
 } from '@heroicons/react/24/outline';
 import { StarIcon as StarSolid } from '@heroicons/react/24/solid';
 
@@ -209,6 +210,26 @@ export default function OrderDetailPage() {
   const isCustomer = user?.role === 'CUSTOMER';
   const isArtisan = user?.role === 'ARTISAN';
 
+  const getChatTarget = () => {
+    if (isCustomer) {
+      const acceptedQuote = quotes.find((q) => q.status === 'ACCEPTED');
+      if (acceptedQuote) {
+        return {
+          id: acceptedQuote.artisanId,
+          name: order.artisanName || acceptedQuote.artisanName,
+        };
+      }
+    } else if (isArtisan) {
+      return {
+        id: order.customerId,
+        name: order.customerName || 'Müşteri',
+      };
+    }
+    return null;
+  };
+
+  const chatTarget = getChatTarget();
+
   return (
     <div className="p-4 sm:p-8 w-full max-w-7xl mx-auto">
       <div className="flex items-center gap-3 mb-4 sm:mb-5">
@@ -320,6 +341,29 @@ export default function OrderDetailPage() {
 
         {/* Sağ: Card'lar */}
         <div className="space-y-5">
+          {/* ─── Mesajlaşma Kartı ─── */}
+          {chatTarget && (
+            <div className="card p-5 border border-[#e9d6d1] bg-white flex items-center justify-between shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#fff1ed] flex items-center justify-center text-[#de6b48]">
+                  <ChatBubbleLeftRightIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm text-[#231916]">Sohbet ve İletişim</h3>
+                  <p className="text-[#8a726b] text-xs mt-0.5">
+                    {isCustomer ? `Zanaatkâr: ${chatTarget.name}` : `Müşteri: ${chatTarget.name}`}
+                  </p>
+                </div>
+              </div>
+              <Link
+                href={`/messages?userId=${chatTarget.id}&userName=${encodeURIComponent(chatTarget.name)}&orderId=${order.id}`}
+                className="btn-primary flex items-center gap-2 text-sm px-4 py-2 rounded-lg font-semibold transition-all cursor-pointer shadow-sm"
+              >
+                Mesaj Gönder
+              </Link>
+            </div>
+          )}
+
           {isCustomer && order.status === 'PENDING' && (
             <>
               <div className="flex items-center justify-between">

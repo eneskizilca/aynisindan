@@ -32,6 +32,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -44,12 +45,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Allow React dev server (Next.js default port 3000) and common alternatives
-        config.setAllowedOrigins(List.of(
-            "http://localhost:3000",
-            "http://localhost:3001",
-            "http://127.0.0.1:3000"
-        ));
+        // Allow any origin with credentials for ease of development/deployment
+        config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
