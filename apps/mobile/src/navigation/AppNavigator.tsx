@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, SafeAreaView, ActivityIndicator, Platform, Dimensions } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,6 +20,7 @@ import MessagesScreen from '../screens/customer/MessagesScreen';
 import ProfileScreen from '../screens/customer/ProfileScreen';
 import ChatScreen from '../screens/customer/ChatScreen';
 
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -45,8 +46,8 @@ function CustomerTabNavigator() {
         tabBarStyle: {
           position: 'absolute',
           bottom: Platform.OS === 'ios' ? 24 : 16,
+          width: SCREEN_WIDTH - 120,
           left: 60,
-          right: 60,
           backgroundColor: '#fff',
           borderRadius: 30,
           height: 64,
