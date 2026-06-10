@@ -46,8 +46,8 @@ function CustomerTabNavigator() {
         tabBarStyle: {
           position: 'absolute',
           bottom: Platform.OS === 'ios' ? 24 : 16,
-          width: SCREEN_WIDTH - 120,
-          left: 60,
+          left: '8%',
+          right: '8%',
           backgroundColor: '#fff',
           borderRadius: 30,
           height: 64,
