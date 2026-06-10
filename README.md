@@ -2,7 +2,7 @@
 
 <img width="220" alt="AYNISINDAN-LOGO" src="https://github.com/user-attachments/assets/35b32498-b728-4ed9-8e65-3e1e47c236d3" />
 
-# 💎 Aynısından
+# Aynısından isteyenlerin yeri!
 ### *Geleneksel el sanatlarının ve usta zanaatkârların güvenli pazar yeri platformu.*
 
 <p align="center">
