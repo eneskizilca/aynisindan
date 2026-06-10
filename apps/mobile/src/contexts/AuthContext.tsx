@@ -25,6 +25,7 @@ interface AuthContextType {
   register: (data: RegisterPayload) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
+  updateUser: (updatedFields: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -97,6 +98,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const updateUser = useCallback(async (updatedFields: Partial<User>) => {
+    if (!user) return;
+    const newUser = { ...user, ...updatedFields };
+    try {
+      await SecureStore.setItemAsync('aynisindan_user', JSON.stringify(newUser));
+      setUser(newUser);
+    } catch (error) {
+      console.error('Failed to update user context', error);
+      throw error;
+    }
+  }, [user]);
+
   const contextValue = useMemo(
     () => ({
       user,
@@ -106,8 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       register,
       logout,
       isAuthenticated: !!token,
+      updateUser,
     }),
-    [user, token, isLoading, login, register, logout]
+    [user, token, isLoading, login, register, logout, updateUser]
   );
 
   return (
