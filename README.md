@@ -19,7 +19,7 @@
 
 ---
 
-**Aynısından**, özel tasarım el emeği ürün yaptırmak isteyen müşteriler ile geleneksel sanatları yaşatan zanaatkârları (ahşap ustaları, seramikçiler, demirciler vb.) bir araya getiren modern bir pazar yeridir. Platform, **Param-Güvende** (escrow) ödeme garantisi, yapay zeka destekli eskiz geliştirme ve anlık mesajlaşma altyapılarını entegre ederek hem alıcı hem de satıcı için üst düzey bir güven sunar.
+**Aynısından**, özel tasarım el emeği ürün yaptırmak isteyen müşteriler ile zanaatkârları (ahşap ustaları, terziler vb.) bir araya getiren modern bir pazar yeridir. Platform, **Param-Güvende** (escrow) ödeme garantisi, yapay zeka destekli eskiz geliştirme ve anlık mesajlaşma altyapılarını entegre ederek hem alıcı hem de satıcı için üst düzey bir güven sunar. Bu yenilikçi vitrinin arka planında ise; yüksek trafiğe dayanıklı, kesintisiz güncellenebilen ve anlık izlenebilirliğe sahip cloud-native bir mikroservis mimarisi yatıyor. Proje, bir fikri sadece koda dökmeyi değil, uçtan uca modern bir DevOps ve SRE kültürüyle ölçeklemeyi merkeze alıyor.
 
 </div>
 
