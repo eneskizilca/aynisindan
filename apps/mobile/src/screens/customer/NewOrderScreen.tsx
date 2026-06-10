@@ -193,7 +193,7 @@ export default function NewOrderScreen({ navigation, route }: any) {
         aiGeneratedImageUrl: aiGeneratedImageUrl || undefined,
       });
 
-      navigation.navigate('CustomerHome');
+      navigation.navigate('CustomerOrdersList');
     } catch (err: any) {
       console.error('Order submit error:', JSON.stringify(err?.response?.data, null, 2));
       const data = err?.response?.data;
