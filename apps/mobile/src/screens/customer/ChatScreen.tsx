@@ -141,20 +141,6 @@ export default function ChatScreen({ route, navigation }: any) {
 
     console.log('✉️ Sending payload:', payload);
     socketRef.current.send(JSON.stringify(payload));
-    
-    // Optimistic local update before WS echo (in case backend does not echo back quickly)
-    const localMsg: ChatMessage = {
-      senderId: user?.userId || '',
-      senderName: user?.fullName || 'Kullanıcı',
-      receiverId: otherUserId,
-      receiverName: otherUserName,
-      content: inputText.trim(),
-      timestamp: new Date().toISOString(),
-      orderId: orderId || undefined,
-      isRead: false,
-    };
-    
-    setMessages((prev) => [...prev, localMsg]);
     setInputText('');
   };
 
@@ -253,9 +239,9 @@ export default function ChatScreen({ route, navigation }: any) {
             maxLength={1000}
           />
           <TouchableOpacity
-            style={[styles.sendButton, !inputText.trim() && styles.sendButtonDisabled]}
+            style={[styles.sendButton, (!inputText.trim() || !wsConnected) && styles.sendButtonDisabled]}
             onPress={handleSendMessage}
-            disabled={!inputText.trim()}
+            disabled={!inputText.trim() || !wsConnected}
           >
             <Ionicons name="send" size={18} color="#fff" />
           </TouchableOpacity>
