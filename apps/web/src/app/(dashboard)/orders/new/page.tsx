@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ordersApi } from '@/services/api';
 import { ArrowLeftIcon, PhotoIcon, CloudArrowUpIcon, LinkIcon, SparklesIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -40,6 +40,21 @@ export default function NewOrderPage() {
 
   const [uploadMode, setUploadMode] = useState<'url' | 'local'>('local');
   const [referenceImageUrl, setReferenceImageUrl] = useState('');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const refImg = params.get('referenceImageUrl');
+      const refTitle = params.get('title');
+      if (refImg) {
+        setReferenceImageUrl(refImg);
+        setUploadMode('url');
+      }
+      if (refTitle) {
+        setTitle(decodeURIComponent(refTitle));
+      }
+    }
+  }, []);
   const [imgSrc, setImgSrc] = useState('');
   const imgRef = useRef<HTMLImageElement>(null);
   const [crop, setCrop] = useState<Crop>();

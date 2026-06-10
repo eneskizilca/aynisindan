@@ -17,6 +17,11 @@ func Setup(r *gin.Engine, jwtSecret string) {
 		// Public Portfolio Query
 		api.GET("/portfolios/:artisanId", portfolioHandler.GetPortfolio)
 
+		// WebSocket Chat Route (token parsed inside)
+		api.GET("/chat/ws", func(c *gin.Context) {
+			handlers.HandleWS(c, jwtSecret)
+		})
+
 		// Internal REST Endpoints
 		internal := api.Group("/internal")
 		{
@@ -24,12 +29,20 @@ func Setup(r *gin.Engine, jwtSecret string) {
 			internal.POST("/orders/review", portfolioHandler.InternalReviewOrder)
 		}
 
-		// Protected Portfolio Endpoints (Artisan Only)
-		protected := api.Group("/portfolios")
+		// Protected Chat & Portfolio Endpoints
+		protected := api.Group("")
 		protected.Use(middleware.JWTAuth(jwtSecret))
 		{
-			protected.POST("", middleware.RequireRole("ARTISAN"), portfolioHandler.UpdatePortfolio)
-			protected.POST("/items", middleware.RequireRole("ARTISAN"), portfolioHandler.CreatePortfolioItem)
+			// Chat REST API
+			protected.GET("/chat/conversations", handlers.GetConversations)
+			protected.GET("/chat/history", handlers.GetChatHistory)
+
+			// Portfolio Endpoints (Artisan Only)
+			portfolios := protected.Group("/portfolios")
+			{
+				portfolios.POST("", middleware.RequireRole("ARTISAN"), portfolioHandler.UpdatePortfolio)
+				portfolios.POST("/items", middleware.RequireRole("ARTISAN"), portfolioHandler.CreatePortfolioItem)
+			}
 		}
 	}
 }

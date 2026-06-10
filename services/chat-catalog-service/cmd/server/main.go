@@ -4,8 +4,11 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/aynisindan/chat-catalog-service/internal/config"
 	"github.com/aynisindan/chat-catalog-service/internal/db"
+	"github.com/aynisindan/chat-catalog-service/internal/handlers"
+	"github.com/aynisindan/chat-catalog-service/internal/middleware"
 	"github.com/aynisindan/chat-catalog-service/internal/routes"
 )
 
@@ -20,6 +23,12 @@ func main() {
 
 	// 3. Initialize Gin Engine
 	r := gin.Default()
+
+	// Expose Prometheus metrics endpoint
+	r.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// Use Prometheus Middleware to collect HTTP metrics
+	r.Use(middleware.PrometheusMiddleware())
 
 	// 4. Simple CORS Middleware
 	r.Use(func(c *gin.Context) {
@@ -36,10 +45,13 @@ func main() {
 		c.Next()
 	})
 
-	// 5. Setup Routes
+	// 5. Start WebSocket Hub coordinator
+	go handlers.GlobalHub.Run()
+
+	// 6. Setup Routes
 	routes.Setup(r, cfg.JWTSecret)
 
-	// 6. Start HTTP Server
+	// 7. Start HTTP Server
 	log.Printf("Server starting on port %s...", cfg.Port)
 	if err := r.Run(":" + cfg.Port); err != nil {
 		log.Fatalf("Failed to run server: %v", err)
