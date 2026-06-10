@@ -3,11 +3,7 @@ name: Continuous Deployment (CD)
 on:
   push:
     branches:
-      - main
-    paths:
-      - 'apps/web/**'
-      - 'services/**'
-      - 'docker-compose*'
+      - main  # veya hangi branch'i canlıya çıkarmak istiyorsan (develop/main)
 
 jobs:
   deploy:
@@ -21,7 +17,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
+          aws-region: us-east-1
 
       - name: Login to Amazon ECR
         id: login-ecr
