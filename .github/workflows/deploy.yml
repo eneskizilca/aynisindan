@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main  # veya hangi branch'i canlıya çıkarmak istiyorsan (develop/main)
+    paths:
+      - 'apps/web/**'
+      - 'services/**'
+      - 'docker-compose*'
 
 jobs:
   deploy:
