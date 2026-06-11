@@ -5,6 +5,8 @@
 # Aynısından isteyenlerin yeri!
 ### *Geleneksel el sanatlarının ve usta zanaatkârların güvenli pazar yeri platformu.*
 
+🔗🌐 **Canlı Demo:** [http://18.192.48.116:3000](http://18.192.48.116:3000)
+
 <p align="center">
   <img src="https://img.shields.io/badge/Spring_Boot-3.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot" />
   <img src="https://img.shields.io/badge/Go_Golang-1.22-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Golang" />
